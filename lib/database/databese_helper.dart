@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -19,13 +21,20 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 9, // 👈 súbelo para forzar recreación
       onCreate: _createDB,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        // Borrar la tabla vieja
+        await db.execute("DROP TABLE IF EXISTS ministros");
+        // Crear de nuevo
+        await _createDB(db, newVersion);
+      },
     );
+
   }
 
   Future _createDB(Database db, int version) async {
-      await db.execute('''
+    await db.execute('''
       CREATE TABLE ministros (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         departamento TEXT NOT NULL,
@@ -40,28 +49,17 @@ class DatabaseHelper {
         direccion_gam TEXT,
         imagen TEXT
       )
-      ''');
+    ''');
 
-      // Datos iniciales
-      await db.insert('ministros', {
-        'departamento': 'La Paz',
-        'municipio': 'Mecapaca',
-        'nombre': 'Enrique',
-        'paterno': 'De La Cruz',
-        'materno': 'Mendoza',
-        'telefono_celular': '71592121',
-        'sigla': 'MAS-IPSP',
-        'telefono_fax': '71592121',
-        'correo': 'ejemplo@correo.com',
-        'direccion_gam': 'Plaza Simona Manzaneda',
-        'imagen': 'messi.jpg',
-      });
-      
+    // Cargar JSON desde assets
+    String data = await rootBundle.loadString('assets/ministros.json');
+    List<dynamic> ministros = jsonDecode(data);
+
+    // Insertar cada ministro
+    for (var ministro in ministros) {
+      await db.insert('ministros', ministro);
     }
-
-
-  
-  
+  }
 
   // Insertar ministro
   Future<int> insert(Map<String, dynamic> row) async {
@@ -70,8 +68,6 @@ class DatabaseHelper {
   }
 
   // Consultar ministros (con filtros)
-  
-
   Future<List<Map<String, dynamic>>> queryMinistros({
     String? departamento,
     String? nombreCompleto,
@@ -80,7 +76,7 @@ class DatabaseHelper {
     String where = "1=1";
     List<dynamic> whereArgs = [];
 
-    if (departamento != null) {
+    if (departamento != null && departamento.isNotEmpty) {
       where += " AND departamento = ?";
       whereArgs.add(departamento);
     }
@@ -90,7 +86,12 @@ class DatabaseHelper {
       whereArgs.add("%$nombreCompleto%");
     }
 
-    return await db.query("ministros", where: where, whereArgs: whereArgs);
+    return await db.query(
+      "ministros",
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: "departamento ASC, municipio ASC", // 👈 ordenado
+    );
   }
 
 }

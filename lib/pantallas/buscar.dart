@@ -31,6 +31,20 @@ class _PantallabusquedaState extends State<Pantallabusqueda> {
   final _formKey = GlobalKey<FormState>(); // clave del formulario
 
   @override
+  void initState() {
+    super.initState();
+    _cargarTodos();
+  }
+
+  Future<void> _cargarTodos() async {
+    final resultados = await DatabaseHelper.instance.queryMinistros();
+    setState(() {
+      listaMinistros = resultados;
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -83,10 +97,10 @@ class _PantallabusquedaState extends State<Pantallabusqueda> {
                         });
                       },
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Selecciona un departamento";
-                        }
-                        return null;
+                        //if (value == null || value.isEmpty) {
+                          //return "Selecciona un departamento";
+                        //}
+                        //return null;
                       },
                     ),
                   ),
@@ -105,27 +119,22 @@ class _PantallabusquedaState extends State<Pantallabusqueda> {
                   fillColor: Colors.white,
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Ingresa un nombre para buscar";
-                  }
-                  return null;
+                  //if (value == null || value.isEmpty) {
+                    //return "Ingresa un nombre para buscar";
+                  //}
+                  //return null;
                 },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  // Validamos el formulario
-                  if (_formKey.currentState!.validate()) {
-                    final resultados =
-                        await DatabaseHelper.instance.queryMinistros(
-                      departamento: seleccionado,
-                      nombreCompleto: _controller.text,
-                    );
-
-                    setState(() {
-                      listaMinistros = resultados;
-                    });
-                  }
+                  final resultados = await DatabaseHelper.instance.queryMinistros(
+                    departamento: seleccionado,
+                    nombreCompleto: _controller.text,
+                  );
+                  setState(() {
+                    listaMinistros = resultados;
+                  });
                 },
                 child: const Icon(Icons.filter_list, color: Colors.white),
               ),

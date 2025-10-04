@@ -9,10 +9,11 @@ class Ministros extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color bordeColor = appColores.getColorPorDepartamento(datos['departamento']);
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: appColores.color3, width: 2),
+        side: BorderSide(color: bordeColor, width: 2),
       ),
       elevation: 4,
       child: Padding(
@@ -21,13 +22,22 @@ class Ministros extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // 📷 Imagen a la izquierda
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                "assets/images/${datos['imagen']}",
-                width: 100,
-                height: 120,
-                fit: BoxFit.cover,
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: bordeColor, // mismo color que el Card
+                  width: 2,                 // grosor del borde
+                ),
+                borderRadius: BorderRadius.circular(8), // esquinas redondeadas
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  "assets/images/alcaldes/${datos['imagen']}",
+                  width: 100,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -76,7 +86,7 @@ class _Dato extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Etiqueta
           Text(label, style: TextStyles.contenedorleft),
