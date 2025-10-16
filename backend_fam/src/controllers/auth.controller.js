@@ -20,17 +20,53 @@ export const register = async (req, res) => {
     // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear usuario
+    // Crear usuario - solo usuarios normales pueden registrarse públicamente
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
-      role: "user", // por defecto usuario normal
+      role: "usuario", // Solo usuarios normales
     });
 
     res.status(201).json({
       message: "Usuario registrado exitosamente",
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Registro especial para administradores (solo admins pueden crear usuarios FAM)
+export const registerFamUser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Validaciones básicas
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Verificar si ya existe el correo
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "El correo ya está registrado" });
+    }
+
+    // Encriptar contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear usuario FAM
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "fam", // Solo usuarios FAM
+    });
+
+    res.status(201).json({
+      message: "Usuario FAM registrado exitosamente",
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

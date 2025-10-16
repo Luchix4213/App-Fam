@@ -1,6 +1,6 @@
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
-import 'package:fam_intento1/pantallas/Inicio.dart';
+import 'package:fam_intento1/pantallas/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -17,10 +17,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: appColores.backgraund,
-        body: PantallaInicio(),
-      ),
+      home: const SplashScreen(),
     );
   }
 }

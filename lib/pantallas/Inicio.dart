@@ -2,14 +2,50 @@ import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/pantallas/buscar.dart';
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/text.dart'; // tus estilos de texto
+import 'package:fam_intento1/services/auth_service.dart';
+import 'package:fam_intento1/pantallas/login.dart';
+import 'package:fam_intento1/pantallas/departamentos.dart';
 
 class PantallaInicio extends StatelessWidget {
   const PantallaInicio({super.key});
+
+  Future<void> _logout(BuildContext context) async {
+    await AuthService.logout();
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appColores.backgraund, // fondo limpio
+      appBar: AppBar(
+        backgroundColor: appColores.backgraund,
+        elevation: 0,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
+            child: const Text(
+              'Iniciar sesión',
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () => _logout(context),
+            tooltip: 'Cerrar sesión',
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -66,11 +102,11 @@ class PantallaInicio extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // 👉 Aquí defines qué hacer al presionar
-                    Navigator.push(context, MaterialPageRoute(builder:(context) => Pantallabusqueda()));
+                    // Navegar a departamentos
+                    Navigator.push(context, MaterialPageRoute(builder:(context) => const DepartamentosScreen()));
                   },
                   child: const Text(
-                    "CONTINUAR",
+                    "VER DEPARTAMENTOS",
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
