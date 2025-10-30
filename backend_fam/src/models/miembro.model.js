@@ -25,7 +25,7 @@ const Miembro = sequelize.define(
       allowNull: true,
     },
     telefono_fax: {
-      type: DataTypes.STRING(40),
+      type: DataTypes.STRING(60),
       allowNull: true,
     },
     correo_personal: {

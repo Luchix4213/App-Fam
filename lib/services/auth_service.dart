@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   // Cambia esta URL por la URL de tu backend cuando esté desplegado
-  //static const String baseUrl = 'http://10.183.203.131:4000/api'; // Para emulador Android fisicamente
+  //static const String baseUrl = 'http://10.35.91.131:4000/api'; // Para emulador Android fisicamente
+  //static const String baseUrl = 'http://192.168.40.245:4000/api'; // Para web
   static const String baseUrl = 'http://10.0.2.2:4000/api'; // Para emulador desde el emulador
   // Para dispositivo físico usar: http://TU_IP_LOCAL:3000/api
   // Para web usar: http://localhost:3000/api

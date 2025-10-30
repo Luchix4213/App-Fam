@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/core/text.dart';
 import 'package:fam_intento1/services/api_service.dart';
@@ -23,6 +24,18 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
   bool _isLoading = true;
   String? _errorMessage;
 
+  static const List<String> _amdesDepartamentos = [
+    'beni',
+    'chuquisaca',
+    'cochabamba',
+    'lapaz',
+    'oruro',
+    'pando',
+    'potosi',
+    'santacruz',
+    'tarija',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +53,30 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     setState(() {
       _isLoading = false;
       if (result['success']) {
-        _miembros = result['data'];
+        final List<dynamic> data = List<dynamic>.from(result['data']);
+        // Ordenar: AMDES por municipio; ACOBOL/AMB por alias
+        data.sort((a, b) {
+          final tipoA = _detectarTipoAsociacion(a);
+          final tipoB = _detectarTipoAsociacion(b);
+
+          String keyA;
+          String keyB;
+
+          if (tipoA == 'AMDES') {
+            keyA = (a['municipio'] ?? '').toString().toUpperCase();
+          } else {
+            keyA = (a['alias'] ?? '').toString().toUpperCase();
+          }
+
+          if (tipoB == 'AMDES') {
+            keyB = (b['municipio'] ?? '').toString().toUpperCase();
+          } else {
+            keyB = (b['alias'] ?? '').toString().toUpperCase();
+          }
+
+          return keyA.compareTo(keyB);
+        });
+        _miembros = data;
       } else {
         _errorMessage = result['message'];
       }
@@ -56,7 +92,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
         title: Text(
           widget.asociacionNombre,
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -188,6 +224,8 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
   Widget _buildMiembroCard(Map<String, dynamic> miembro) {
     final userRole = AuthService.user?['role'] ?? 'usuario';
     final isAdminOrFam = userRole == 'admin' || userRole == 'fam';
+    final tipoAsociacion = _detectarTipoAsociacion(miembro);
+    final isAmdes = tipoAsociacion == 'AMDES';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -210,18 +248,50 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 72, 228, 33).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Color.fromARGB(255, 72, 228, 33),
-                    size: 24,
-                  ),
+                FutureBuilder<String?>(
+                  future: _resolverRutaFotoMiembro(miembro),
+                  builder: (context, snapshot) {
+                    final ruta = snapshot.data;
+                    if (ruta == null || snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 72, 228, 33).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          color: Color.fromARGB(255, 72, 228, 33),
+                          size: 24,
+                        ),
+                      );
+                    }
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        ruta,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 72, 228, 33).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              color: Color.fromARGB(255, 72, 228, 33),
+                              size: 24,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -229,23 +299,36 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        miembro['alias'] ?? miembro['nombre'] ?? 'Sin nombre',
+                        // Para AMDES mostrar municipio, caso contrario alias (o nombre)
+                        isAmdes
+                            ? ((miembro['municipio'] ?? '').toString().isNotEmpty
+                                ? miembro['municipio']
+                                : (miembro['alias'] ?? miembro['nombre'] ?? 'Sin nombre'))
+                            : (miembro['alias'] ?? miembro['nombre'] ?? 'Sin nombre'),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
-                      if (miembro['nombre'] != null && miembro['alias'] != null)
+                      if (!isAmdes && miembro['nombre'] != null && miembro['alias'] != null)
                         Text(
-                          miembro['nombre'],
+                          'Municipio: ${miembro['municipio']}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
                           ),
                         ),
-                      if (miembro['municipio'] != null)
+                      if (isAmdes && (miembro['alias'] ?? '').toString().isNotEmpty)
                         Text(
-                          'Municipio: ${miembro['municipio']}',
+                          miembro['alias'],
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      if (miembro['nombre'] != null)
+                        Text(
+                          'Nombre: ${miembro['nombre']}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 12,
@@ -315,5 +398,143 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
         ],
       ),
     );
+  }
+}
+
+extension on _MiembrosScreenState {
+  String _detectarTipoAsociacion(Map<String, dynamic> miembro) {
+    final asociacionData = miembro['Asociacion'] ?? miembro['asociacion'] ?? <String, dynamic>{};
+    final tipoAsociacion = ((asociacionData['tipo'] ?? asociacionData['Tipo'] ?? '').toString().trim().toUpperCase());
+    if (tipoAsociacion.isNotEmpty) return tipoAsociacion;
+    final nombreAsociacion = (widget.asociacionNombre).toLowerCase();
+    if (nombreAsociacion.contains('amdes')) return 'AMDES';
+    if (nombreAsociacion.contains('acobol')) return 'ACOBOL';
+    if (nombreAsociacion.contains('amb')) return 'AMB';
+    return '';
+  }
+
+  Future<String?> _resolverRutaFotoMiembro(Map<String, dynamic> miembro) async {
+    // Obtener tipo de asociación desde los datos del miembro
+    // Sequelize puede devolver las relaciones con diferentes casos
+    final asociacionData = miembro['Asociacion'] ?? miembro['asociacion'] ?? <String, dynamic>{};
+    final tipoAsociacion = ((asociacionData['tipo'] ?? asociacionData['Tipo'] ?? '').toString().trim().toUpperCase());
+    final alias = (miembro['alias'] ?? '').toString().trim();
+    final municipio = (miembro['municipio'] ?? '').toString().trim();
+    
+    // Mapeo de nombres de departamento a nombres de carpetas
+    final Map<String, String> deptoNamesMap = {
+      'LA PAZ': 'lapaz',
+      'COCHABAMBA': 'cochabamba',
+      'SANTA CRUZ': 'santacruz',
+      'POTOSÍ': 'potosi',
+      'POTOSI': 'potosi',
+      'ORURO': 'oruro',
+      'CHUQUISACA': 'chuquisaca',
+      'BENI': 'beni',
+      'PANDO': 'pando',
+      'TARIJA': 'tarija',
+    };
+
+    // Si no hay tipo, intentar detectar por nombre de asociación como fallback
+    String? tipoDetectado = tipoAsociacion.isNotEmpty 
+        ? tipoAsociacion 
+        : null;
+    
+    if (tipoDetectado == null) {
+      final nombreAsociacion = (widget.asociacionNombre).toLowerCase();
+      if (nombreAsociacion.contains('amdes')) {
+        tipoDetectado = 'AMDES';
+      } else if (nombreAsociacion.contains('acobol')) {
+        tipoDetectado = 'ACOBOL';
+      } else if (nombreAsociacion.contains('amb')) {
+        tipoDetectado = 'AMB';
+      }
+    }
+
+    // AMDES: buscar por municipio en la carpeta del departamento
+    if (tipoDetectado == 'AMDES') {
+      if (municipio.isEmpty) return null;
+      
+      // Obtener nombre del departamento de la asociación
+      final departamentoData = asociacionData['Departamento'] ?? 
+                               asociacionData['departamento'] ?? 
+                               {};
+      final nombreDepto = ((departamentoData['nombre'] ?? departamentoData['Nombre'] ?? '').toString().trim().toUpperCase());
+      
+      // Normalizar nombre del departamento a nombre de carpeta
+      String carpetaDepto = deptoNamesMap[nombreDepto] ?? 
+          nombreDepto.toLowerCase().replaceAll(' ', '');
+      
+      // Si no se encuentra el mapeo, intentar con todos los departamentos
+      final deptosABuscar = carpetaDepto.isNotEmpty && 
+          _MiembrosScreenState._amdesDepartamentos.contains(carpetaDepto)
+          ? [carpetaDepto]
+          : _MiembrosScreenState._amdesDepartamentos;
+      
+      final nombres = <String>{
+        municipio,
+        municipio.toUpperCase(),
+        municipio.toLowerCase(),
+      }..removeWhere((e) => e.isEmpty);
+      
+      final extensiones = ['.JPG', '.jpg', '.png'];
+      
+      for (final depto in deptosABuscar) {
+        for (final nombreArchivo in nombres) {
+          for (final ext in extensiones) {
+            final ruta = 'assets/images/miembros/amdes/$depto/$nombreArchivo$ext';
+            if (await _assetExiste(ruta)) return ruta;
+          }
+        }
+      }
+      return null;
+    }
+
+    // ACOBOL: buscar por alias
+    if (tipoDetectado == 'ACOBOL') {
+      if (alias.isEmpty) return null;
+      final variantes = <String>[
+        alias,
+        alias.toUpperCase(),
+        alias.toLowerCase(),
+      ];
+      final extensiones = ['.JPG', '.jpg', '.png'];
+      for (final base in variantes) {
+        for (final ext in extensiones) {
+          final ruta = 'assets/images/miembros/acobol/$base$ext';
+          if (await _assetExiste(ruta)) return ruta;
+        }
+      }
+      return null;
+    }
+
+    // AMB: buscar por alias
+    if (tipoDetectado == 'AMB') {
+      if (alias.isEmpty) return null;
+      final variantes = <String>[
+        alias,
+        alias.toUpperCase(),
+        alias.toLowerCase(),
+      ];
+      final extensiones = ['.JPG', '.jpg', '.png'];
+      for (final base in variantes) {
+        for (final ext in extensiones) {
+          final ruta = 'assets/images/miembros/amb/$base$ext';
+          if (await _assetExiste(ruta)) return ruta;
+        }
+      }
+      return null;
+    }
+
+    return null;
+  }
+
+  Future<bool> _assetExiste(String ruta) async {
+    try {
+      await rootBundle.load(ruta);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }

@@ -4,7 +4,8 @@ import 'package:fam_intento1/services/auth_service.dart';
 
 class ApiService {
   
-  //static const String baseUrl = 'http://10.183.203.131:4000/api'; // Para emulador Android fisicamente
+  //static const String baseUrl = 'http://10.35.91.131:4000/api'; // Para emulador Android fisicamente
+  //static const String baseUrl = 'http://192.168.40.245:4000/api'; // Para emulador Android fisicamente
   static const String baseUrl = 'http://10.0.2.2:4000/api'; // Para emulador desde el emulador
 
   // Obtener headers con autenticación

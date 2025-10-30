@@ -12,7 +12,7 @@ const Departamento = sequelize.define(
   },
   {
     tableName: "departamento",
-    timestamps: false,
+    timestamps: false, 
   }
 );
 

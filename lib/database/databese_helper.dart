@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 9, // 👈 súbelo para forzar recreación
+      version: 11, // 👈 súbelo para forzar recreación
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         // Borrar la tabla vieja
@@ -35,21 +35,23 @@ class DatabaseHelper {
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE ministros (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        departamento TEXT NOT NULL,
-        municipio TEXT NOT NULL,
-        nombre TEXT NOT NULL,
-        paterno TEXT,
-        materno TEXT,
-        telefono_celular TEXT,
-        sigla TEXT,
-        telefono_fax TEXT,
-        correo TEXT,
-        direccion_gam TEXT,
-        imagen TEXT
-      )
-    ''');
+    CREATE TABLE ministros (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      alias TEXT,
+      nombre TEXT NOT NULL,
+      municipio TEXT,
+      telefono_personal TEXT,
+      telefono_publico TEXT,
+      telefono_fax TEXT,
+      correo_personal TEXT,
+      correo_publico TEXT,
+      direccion_gam TEXT,
+      tipo_miembro TEXT,
+      estado TEXT,
+      id_asociacion INTEGER
+    )
+  ''');
+
 
     // Cargar JSON desde assets
     String data = await rootBundle.loadString('assets/ministros.json');

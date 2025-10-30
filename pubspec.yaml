@@ -30,9 +30,20 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/miembros/amdes/
+    - assets/images/miembros/acobol/
+    - assets/images/miembros/amb/
     - assets/ministros.json
-    #- assets/images/alcaldes/
     - assets/images/departamentos/
+    - assets/images/miembros/amdes/lapaz/
+    - assets/images/miembros/amdes/santacruz/
+    - assets/images/miembros/amdes/cochabamba/
+    - assets/images/miembros/amdes/oruro/
+    - assets/images/miembros/amdes/potosi/
+    - assets/images/miembros/amdes/pando/
+    - assets/images/miembros/amdes/beni/
+    - assets/images/miembros/amdes/chuquisaca/
+    - assets/images/miembros/amdes/tarija/
 
 
 
