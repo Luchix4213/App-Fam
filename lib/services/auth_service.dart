@@ -9,7 +9,6 @@ class AuthService {
   static const String baseUrl = 'http://10.0.2.2:4000/api'; // Para emulador desde el emulador
   // Para dispositivo físico usar: http://TU_IP_LOCAL:3000/api
   // Para web usar: http://localhost:3000/api
-
   // Token de autenticación
   static String? _token;
   static Map<String, dynamic>? _user;
