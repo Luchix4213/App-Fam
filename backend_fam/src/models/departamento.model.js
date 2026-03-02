@@ -9,10 +9,18 @@ const Departamento = sequelize.define(
       allowNull: false,
       unique: true,
     },
+    foto: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    estado: {
+      type: DataTypes.ENUM("activo", "inactivo"),
+      defaultValue: "activo",
+    },
   },
   {
     tableName: "departamento",
-    timestamps: false, 
+    timestamps: false,
   }
 );
 

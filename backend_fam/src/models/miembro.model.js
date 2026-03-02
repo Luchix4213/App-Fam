@@ -8,6 +8,10 @@ const Miembro = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: true,
     },
+    foto: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     nombre: {
       type: DataTypes.STRING(200),
       allowNull: false,

@@ -3,6 +3,7 @@ import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/core/text.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/pantallas/miembros.dart';
+import 'package:fam_intento1/database/databese_helper.dart';
 
 class AsociacionesScreen extends StatefulWidget {
   final int departamentoId;
@@ -35,16 +36,18 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
       _errorMessage = null;
     });
 
-    final result = await ApiService.getAsociacionesByDepartamento(widget.departamentoId);
-    
-    setState(() {
-      _isLoading = false;
-      if (result['success']) {
-        _asociaciones = result['data'];
-      } else {
-        _errorMessage = result['message'];
-      }
-    });
+    try {
+      final data = await DatabaseHelper.instance.getAsociacionesByDepto(widget.departamentoId);
+      setState(() {
+        _isLoading = false;
+        _asociaciones = data;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Error cargando datos locales: $e";
+      });
+    }
   }
 
   @override

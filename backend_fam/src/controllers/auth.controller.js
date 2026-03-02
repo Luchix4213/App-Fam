@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const register = async (req, res) => {
   try {
@@ -107,5 +110,60 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Autenticación con Google
+export const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: "Se requiere un idToken de Google" });
+    }
+
+    // Verificar el token con Google
+    const clientIds = process.env.GOOGLE_CLIENT_ID.split(',').map(id => id.trim());
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: clientIds, // Puede ser un array si se usan varios clientes (Web, iOS, Android)
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    // Buscar si el usuario ya existe
+    let user = await User.findOne({ where: { email } });
+
+    // Si no existe, crearlo con rol de "usuario"
+    if (!user) {
+      // Generar una contraseña aleatoria segura, ya que el logueo es por Google
+      const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+      user = await User.create({
+        name: name,
+        email: email,
+        password: hashedPassword,
+        role: "usuario",
+      });
+    }
+
+    // Generar el Token JWT interno del sistema (El que ya usamos)
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    res.json({
+      message: "Login con Google exitoso",
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    });
+
+  } catch (err) {
+    console.error("Error en googleLogin:", err);
+    res.status(500).json({ message: "Error verificando token de Google: " + err.message });
   }
 };

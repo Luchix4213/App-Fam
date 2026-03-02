@@ -3,6 +3,9 @@ import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/pantallas/login.dart';
 import 'package:fam_intento1/pantallas/Inicio.dart';
+import 'package:fam_intento1/services/sync_service.dart';
+import 'package:fam_intento1/pantallas/public_main_screen.dart';
+import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,6 +13,8 @@ class SplashScreen extends StatefulWidget {
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+
+
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
@@ -22,24 +27,29 @@ class _SplashScreenState extends State<SplashScreen> {
     // Inicializar el servicio de autenticación
     await AuthService.initialize();
 
+    // Sincronizar datos en segundo plano (no bloqueante o con timeout corto si se desea)
+    // Para asegurar datos frescos al inicio, podríamos esperar.
+    // Usaremos un "fire and forget" seguro o esperamos si queremos garantizar datos.
+    // Dado que existe JSON local, no bloqueamos demasiado.
+    SyncService.syncAll(); 
+
     // Esperar un poco para mostrar el splash
     await Future.delayed(const Duration(seconds: 2));
 
-    // Verificar si hay un token válido; si no, intentar login genérico
+    // Verificar si hay un token válido
     var isValid = await AuthService.verifyToken();
-    if (!isValid) {
-      final guestOk = await AuthService.loginAsGuestIfNeeded();
-      if (guestOk) {
-        isValid = await AuthService.verifyToken();
-      }
-    }
 
     if (mounted) {
       if (AuthService.isLoggedIn && isValid) {
         // Usuario logueado y token válido
+        final role = await AuthService.getUserRole();
+        final isAdmin = role != null && (role.toLowerCase() == 'admin' || role.toLowerCase() == 'superadmin' || role.toLowerCase() == 'fam');
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const PantallaInicio()),
+          MaterialPageRoute(
+            builder: (context) => isAdmin ? const DashboardScreen() : const PublicMainScreen(),
+          ),
         );
       } else {
         // Usuario no logueado o token inválido
@@ -47,9 +57,10 @@ class _SplashScreenState extends State<SplashScreen> {
           // Token inválido, hacer logout
           await AuthService.logout();
         }
+        // Exigir login para todos (ya sea admin o usuario público)
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const PantallaInicio()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       }
     }
