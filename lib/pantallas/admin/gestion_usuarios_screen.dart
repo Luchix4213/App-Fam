@@ -206,15 +206,15 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
                          height: 70,
                          padding: const EdgeInsets.symmetric(horizontal: 20),
                          decoration: BoxDecoration(
-                           gradient: const LinearGradient(
-                             colors: [Color(0xFF0277BD), Color(0xFF00C853)],
+                           gradient: LinearGradient(
+                             colors: [appColores.dashTealStart, Colors.white.withOpacity(0.85)],
                              begin: Alignment.centerLeft,
                              end: Alignment.centerRight,
                            ),
                            borderRadius: BorderRadius.circular(20),
                            boxShadow: [
                              BoxShadow(
-                               color: const Color(0xFF0277BD).withOpacity(0.3),
+                               color: appColores.dashTealStart.withOpacity(0.3),
                                blurRadius: 15,
                                offset: const Offset(0, 8),
                              )

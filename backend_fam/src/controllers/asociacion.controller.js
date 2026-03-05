@@ -1,4 +1,4 @@
-import { Asociacion, Departamento } from "../models/index.js";
+import { Asociacion } from "../models/index.js";
 import { uploadStream, deleteImage } from "../config/cloudinary.config.js";
 
 const deleteOldImage = async (imagePath) => {
@@ -41,7 +41,6 @@ export const listAsociaciones = async (req, res) => {
 
     const items = await Asociacion.findAll({
       where: where,
-      include: [{ model: Departamento }],
       order: [['nombre', 'ASC']]
     });
     res.json(items);
@@ -52,7 +51,7 @@ export const listAsociaciones = async (req, res) => {
 
 export const getAsociacion = async (req, res) => {
   try {
-    const item = await Asociacion.findByPk(req.params.id, { include: [{ model: Departamento }] });
+    const item = await Asociacion.findByPk(req.params.id);
     if (!item) return res.status(404).json({ message: "No encontrado" });
     res.json(item);
   } catch (error) {
@@ -97,49 +96,6 @@ export const deleteAsociacion = async (req, res) => {
   }
 };
 
-// Obtener asociaciones por departamento con filtros según rol
-export const getAsociacionesByDepartamento = async (req, res) => {
-  try {
-    const { departamentoId } = req.params;
-    const userRole = req.user?.role || 'usuario';
 
-    // Campos básicos para todos los usuarios
-    let attributes = [
-      'id', 'alias', 'nombre', 'municipio',
-      'telefono_publico', 'telefono_fax', 'correo_publico', 'direccion', 'foto'
-    ];
-
-    // Campos adicionales para usuarios FAM y admin
-    if (userRole === 'fam' || userRole === 'admin') {
-      attributes = [
-        'id', 'alias', 'nombre', 'presidente', 'municipio',
-        'telefono_personal', 'telefono_publico', 'telefono_fax',
-        'correo_personal', 'correo_publico', 'tipo', 'direccion', 'estado', 'foto'
-      ];
-    }
-
-    const asociaciones = await Asociacion.findAll({
-      where: {
-        id_departamento: departamentoId,
-        estado: 'activo'
-      },
-      attributes: attributes,
-      include: [{
-        model: Departamento,
-        attributes: ['id', 'nombre']
-      }],
-      order: [['nombre', 'ASC']]
-    });
-
-    res.json(asociaciones);
-  } catch (error) {
-    console.error('Error al obtener asociaciones:', error);
-    res.status(500).json({
-      message: 'Error interno del servidor',
-      error: error.message,
-      details: error.stack
-    });
-  }
-};
 
 

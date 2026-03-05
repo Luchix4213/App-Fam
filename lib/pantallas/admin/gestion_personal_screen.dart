@@ -1,28 +1,26 @@
-import 'dart:io';
-import 'dart:ui'; // For ImageFilter
+﻿import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/services/auth_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/widgets/admin_drawer.dart';
-import 'package:fam_intento1/core/image_helper.dart';
 import 'package:fam_intento1/pantallas/login.dart';
-import 'package:fam_intento1/pantallas/Inicio.dart';
-import 'package:fam_intento1/pantallas/public_main_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class GestionAsociacionesScreen extends StatefulWidget {
-  const GestionAsociacionesScreen({super.key});
+class GestionPersonalScreen extends StatefulWidget {
+  const GestionPersonalScreen({super.key});
 
   @override
-  State<GestionAsociacionesScreen> createState() => _GestionAsociacionesScreenState();
+  State<GestionPersonalScreen> createState() => _GestionPersonalScreenState();
 }
 
-class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
+class _GestionPersonalScreenState extends State<GestionPersonalScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
-  List<dynamic> _asociaciones = [];
-  List<dynamic> _filteredAsociaciones = [];
+  List<dynamic> _personal = [];
+  List<dynamic> _filteredPersonal = [];
   final TextEditingController _searchCtrl = TextEditingController();
   String _filterState = 'activo';
 
@@ -42,10 +40,10 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
   void _filter() {
     final query = _searchCtrl.text.toLowerCase();
     setState(() {
-      _filteredAsociaciones = _asociaciones.where((a) {
-        final nombre = (a['nombre'] ?? '').toLowerCase();
-        final alias = (a['alias'] ?? '').toLowerCase();
-        return nombre.contains(query) || alias.contains(query);
+      _filteredPersonal = _personal.where((p) {
+        final nombre = (p['nombre'] ?? '').toString().toLowerCase();
+        final cargo = (p['cargo'] ?? '').toString().toLowerCase();
+        return nombre.contains(query) || cargo.contains(query);
       }).toList();
     });
   }
@@ -53,15 +51,13 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     try {
-      final asocRes = await ApiService.getAllAsociaciones(estado: _filterState);
-
-      if (asocRes['success'] == true) {
+      final res = await ApiService.getAllPersonal(estado: _filterState);
+      if (res['success'] == true) {
         setState(() {
-          _asociaciones = asocRes['data'];
-          _filteredAsociaciones = List.from(_asociaciones);
+          _personal = res['data'];
+          _filteredPersonal = List.from(_personal);
         });
       }
-
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
@@ -79,34 +75,32 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     }
   }
 
-  void _showForm({Map<String, dynamic>? asociacion}) {
+  void _showForm({Map<String, dynamic>? personalInfo}) {
     showGeneralDialog(
       context: context,
-      barrierDismissible: true, // Allow clicking outside to close
+      barrierDismissible: true,
       barrierLabel: "Cerrar",
-      barrierColor: Colors.black.withOpacity(0.5), // Semi-transparent overlay
+      barrierColor: Colors.black.withOpacity(0.5),
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, anim1, anim2) {
         return Stack(
           children: [
-            // Blur Effect
             Positioned.fill(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: Container(color: Colors.transparent),
               ),
             ),
-            // Modal Content
             Center(
               child: Material(
                 color: Colors.transparent,
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  constraints: const BoxConstraints(maxWidth: 600, maxHeight: 850), // Wider max width
+                  constraints: const BoxConstraints(maxWidth: 600, maxHeight: 850),
                   padding: const EdgeInsets.all(25),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(25), // Rounded
+                    borderRadius: BorderRadius.circular(25),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
@@ -115,8 +109,8 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                       )
                     ]
                   ),
-                  child: AsociacionForm(
-                    asociacion: asociacion,
+                  child: PersonalForm(
+                    personal: personalInfo,
                     onSave: () {
                       Navigator.pop(context);
                       _loadData();
@@ -137,7 +131,7 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Confirmar Eliminación", style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text("¿Estás seguro de dar de baja esta asociación?"),
+        content: const Text("¿Estás seguro de dar de baja a este personal?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -155,9 +149,9 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
       try {
-        final res = await ApiService.updateAsociacion(id, {'estado': 'inactivo'}, null);
+        final res = await ApiService.deletePersonal(id);
         if (res['success'] == true || res['success'] == 'true') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Asociación dada de baja")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Personal dado de baja")));
           _loadData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${res['message']}")));
@@ -176,7 +170,7 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Confirmar Reactivación", style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text("¿Deseas reactivar esta asociación?"),
+        content: const Text("¿Deseas reactivar a este personal?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -194,9 +188,9 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
       try {
-        final res = await ApiService.updateAsociacion(id, {'estado': 'activo'}, null);
-        if (res['success'] == true || res['success'] == 'true') { // A veces el String return 
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Asociación reactivada")));
+        final res = await ApiService.updatePersonal(id, {'estado': 'activo'}, null);
+        if (res['success'] == true || res['success'] == 'true') {
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Personal reactivado")));
            _loadData();
         } else {
            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${res['message']}")));
@@ -214,13 +208,13 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: appColores.backgraund,
-      drawer: const AdminDrawer(currentRoute: 'Asociaciones'),
+      drawer: const AdminDrawer(currentRoute: 'Personal FAM'),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showForm(),
-        backgroundColor: const Color(0xFF1E88E5),
+        backgroundColor: const Color(0xFF1E88E5), // Blue 600
         elevation: 4,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text("Nueva Asociación", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        label: const Text("Nuevo Personal", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: _isLoading 
           ? const Center(child: CircularProgressIndicator(color: appColores.dashTealStart))
@@ -231,16 +225,15 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                  height: 220,
                  child: Stack(
                    children: [
-                     // 1. Gradient Background
                      Container(
                        height: 180,
-                       decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [appColores.dashTealStart, appColores.dashTealEnd],
+                       decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [appColores.headerTealStart, appColores.headerTealEnd],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(30),
                             bottomRight: Radius.circular(30)
                           )
@@ -277,7 +270,6 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                        ),
                      ),
 
-                     // 2. Title Card
                      Positioned(
                        bottom: 0,
                        left: 20,
@@ -304,7 +296,7 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                            children: const [
                              Expanded(
                                child: Text(
-                                 "Gestión de Asociaciones",
+                                 "Gestión de Personal",
                                  style: TextStyle(
                                    color: Colors.white,
                                    fontSize: 20,
@@ -341,7 +333,7 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                    child: TextField(
                      controller: _searchCtrl,
                      decoration: InputDecoration(
-                       hintText: "Buscar por nombre o alias...",
+                       hintText: "Buscar por nombre o cargo...",
                        hintStyle: TextStyle(color: Colors.grey.shade400),
                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                        border: InputBorder.none,
@@ -349,48 +341,68 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
                      ),
                    ),
                  ),
-               ),
-
-                const SizedBox(height: 15),
-
-                // FILTRO ESTADO
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: [
-                      const Text("Estado: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(width: 10),
-                      DropdownButton<String>(
-                        value: _filterState,
-                        underline: Container(), // clean look
-                        style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                        items: const [
-                           DropdownMenuItem(value: 'activo', child: Text("Activos")),
-                           DropdownMenuItem(value: 'inactivo', child: Text("Inactivos")),
-                           DropdownMenuItem(value: 'todos', child: Text("Todos")),
-                        ], 
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _filterState = val);
-                            _loadData();
-                          }
-                        }
-                      ),
-                    ],
-                  ),
                 ),
-                
+
                 const SizedBox(height: 15),
 
-               // LISTA DE ASOCIACIONES
+                 // FILTROS: ESTADO
+                 Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20),
+                   child: Row(
+                     children: [
+                       // Filtro Estado
+                       Expanded(
+                         child: Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 12),
+                           decoration: BoxDecoration(
+                             color: Colors.white,
+                             borderRadius: BorderRadius.circular(10),
+                             border: Border.all(color: Colors.grey.shade200)
+                           ),
+                           child: Row(
+                             children: [
+                               const Icon(Icons.check_circle_outline, size: 16, color: Colors.grey),
+                               const SizedBox(width: 8),
+                               Expanded(
+                                 child: DropdownButtonHideUnderline(
+                                   child: DropdownButton<String>(
+                                     value: _filterState,
+                                     isExpanded: true,
+                                     style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
+                                     icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                                     items: const [
+                                       DropdownMenuItem(value: 'activo', child: Text("Activos")),
+                                       DropdownMenuItem(value: 'inactivo', child: Text("Inactivos")),
+                                       DropdownMenuItem(value: 'todos', child: Text("Todos")),
+                                     ],
+                                     onChanged: (val) {
+                                       if (val != null) {
+                                         setState(() => _filterState = val);
+                                         _loadData();
+                                       }
+                                     },
+                                   ),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+
+                 const SizedBox(height: 15),
+
+                // LISTA DE PERSONAL
                Expanded(
                  child: ListView.separated(
                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
-                   itemCount: _filteredAsociaciones.length,
+                   itemCount: _filteredPersonal.length,
                    separatorBuilder: (ctx, i) => const SizedBox(height: 15),
                    itemBuilder: (context, index) {
-                     final a = _filteredAsociaciones[index];
-                     return _buildAsociacionCard(a);
+                     final p = _filteredPersonal[index];
+                     return _buildPersonalCard(p);
                    },
                  ),
                ),
@@ -399,9 +411,11 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     );
   }
 
-  Widget _buildAsociacionCard(Map<String, dynamic> a) {
-    final estado = (a['estado'] ?? 'ACTIVO').toString().toUpperCase();
-    final isActive = estado == 'ACTIVO';
+  Widget _buildPersonalCard(Map<String, dynamic> p) {
+    final isActive = (p['estado'] ?? 'activo') == 'activo';
+    final cargo = (p['cargo'] ?? 'SIN CARGO').toString();
+
+    final String fotoUrl = p['foto']?.toString() ?? "";
 
     return Container(
       decoration: BoxDecoration(
@@ -418,74 +432,78 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
       child: Material(
         color: Colors.transparent,
         child: Padding(
-          padding: const EdgeInsets.all(16.0), // Generous padding
+          padding: const EdgeInsets.all(16.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar Section
+              // Avatar
               Container(
-                 padding: const EdgeInsets.all(2), // Border space
-                 decoration: BoxDecoration(
-                   shape: BoxShape.circle,
-                   border: Border.all(color: appColores.dashTealStart.withOpacity(0.2), width: 2)
-                 ),
-                 child: ImageHelper.getCircleAvatar(
-                    apiPath: a['foto'], 
-                    name: a['nombre'], 
-                    alias: a['alias'], 
-                    type: 'asociacion',
-                    radius: 28 // Slightly larger
-                  ),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: appColores.dashTealStart.withOpacity(0.1), width: 3)
+                ),
+                child: CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.grey.shade200,
+                  backgroundImage: fotoUrl.isNotEmpty 
+                      ? CachedNetworkImageProvider(fotoUrl.startsWith('http') ? fotoUrl : "${ApiService.baseUrl.replaceAll('/api', '')}$fotoUrl") as ImageProvider
+                      : null,
+                  child: fotoUrl.isEmpty
+                      ? const Icon(Icons.person, color: Colors.grey, size: 30)
+                      : null,
+                ),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 16),
               
-              // Info Section
+              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                      Text(
-                        a['nombre'] ?? 'Sin Nombre',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF263238)),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          _buildBadge(
-                            estado, 
-                          isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1), 
-                          isActive ? Colors.green.shade700 : Colors.red.shade700
-                        ),
+                    Text(
+                      p['nombre'] ?? 'Sin Nombre',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF263238)),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(cargo, style: const TextStyle(fontSize: 13, color: appColores.dashTealStart, fontWeight: FontWeight.bold)),
+                    
+                    if (p['celular'] != null && p['celular'].toString().isNotEmpty)
+                      Text('Cel: ${p['celular']}', style: const TextStyle(fontSize: 12, color: Color(0xFF90A4AE))),
+                    if (p['correo_electronico'] != null && p['correo_electronico'].toString().isNotEmpty)
+                      Text('✉️ ${p['correo_electronico']}', style: const TextStyle(fontSize: 12, color: Color(0xFF90A4AE))),
+                    
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        _buildBadge(isActive ? "ACTIVO" : "INACTIVO", isActive ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE), isActive ? const Color(0xFF2E7D32) : const Color(0xFFC62828)),
                       ],
                     )
                   ],
                 ),
               ),
               
-              // Actions Section
+              // Actions
               Column(
                 children: [
                    if (isActive) ...[
                       IconButton(
-                        onPressed: () => _showForm(asociacion: a),
+                        onPressed: () => _showForm(personalInfo: p), 
                         icon: const Icon(Icons.edit_outlined, color: Color(0xFF29B6F6)),
-                        tooltip: "Editar",
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
                       const SizedBox(height: 15),
                       IconButton(
-                        onPressed: () => _delete(a['id']),
+                        onPressed: () => _delete(p['id']), 
                         icon: const Icon(Icons.delete_outline, color: Color(0xFFEF5350)),
-                        tooltip: "Eliminar",
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
                    ] else ...[
                       ElevatedButton.icon(
-                       onPressed: () => _reactivate(a['id']), 
+                       onPressed: () => _reactivate(p['id']), 
                        icon: const Icon(Icons.refresh, size: 16), 
                        label: const Text("Reactivar"),
                        style: ElevatedButton.styleFrom(
@@ -508,30 +526,28 @@ class _GestionAsociacionesScreenState extends State<GestionAsociacionesScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
-      child: Text(
-        text, 
-        style: TextStyle(color: fg, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)
-      ),
+      child: Text(text, style: TextStyle(color: fg, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
     );
   }
 }
 
-class AsociacionForm extends StatefulWidget {
-  final Map<String, dynamic>? asociacion;
+class PersonalForm extends StatefulWidget {
+  final Map<String, dynamic>? personal;
   final VoidCallback onSave;
 
-  const AsociacionForm({super.key, this.asociacion, required this.onSave});
+  const PersonalForm({super.key, this.personal, required this.onSave});
 
   @override
-  State<AsociacionForm> createState() => _AsociacionFormState();
+  State<PersonalForm> createState() => _PersonalFormState();
 }
 
-class _AsociacionFormState extends State<AsociacionForm> {
+class _PersonalFormState extends State<PersonalForm> {
   final _formKey = GlobalKey<FormState>();
   final _nombreCtrl = TextEditingController();
-  final _aliasCtrl = TextEditingController();
+  final _cargoCtrl = TextEditingController();
+  final _celularCtrl = TextEditingController();
+  final _correoCtrl = TextEditingController();
   
-  String _estado = 'ACTIVO';
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool _isSaving = false;
@@ -539,11 +555,12 @@ class _AsociacionFormState extends State<AsociacionForm> {
   @override
   void initState() {
     super.initState();
-    if (widget.asociacion != null) {
-      final a = widget.asociacion!;
-      _nombreCtrl.text = a['nombre'] ?? '';
-      _aliasCtrl.text = a['alias'] ?? '';
-      _estado = (a['estado'] ?? 'ACTIVO').toString().toUpperCase();
+    if (widget.personal != null) {
+      final p = widget.personal!;
+      _nombreCtrl.text = p['nombre'] ?? '';
+      _cargoCtrl.text = p['cargo'] ?? '';
+      _celularCtrl.text = p['celular'] ?? '';
+      _correoCtrl.text = p['correo_electronico'] ?? '';
     }
   }
 
@@ -554,25 +571,30 @@ class _AsociacionFormState extends State<AsociacionForm> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    
     setState(() => _isSaving = true);
+
     try {
       final data = {
         'nombre': _nombreCtrl.text,
-        'alias': _aliasCtrl.text,
-        'estado': _estado.toLowerCase(),
+        'cargo': _cargoCtrl.text,
+        'celular': _celularCtrl.text,
+        'correo_electronico': _correoCtrl.text,
+        'estado': 'activo',
       };
-      
-       Map<String, dynamic> res;
-      if (widget.asociacion == null) {
-        res = await ApiService.createAsociacion(data, _imageFile?.path);
+
+      Map<String, dynamic> res;
+      if (widget.personal == null) {
+        res = await ApiService.createPersonal(data, _imageFile?.path);
       } else {
-        res = await ApiService.updateAsociacion(widget.asociacion!['id'], data, _imageFile?.path);
+        res = await ApiService.updatePersonal(widget.personal!['id'], data, _imageFile?.path);
       }
 
-      if (res['success']) widget.onSave();
-      else if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
-
+      if (res['success'] == true) {
+         widget.onSave();
+      }
+      else if (mounted) {
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
+      }
     } catch (e) {
       if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
@@ -593,18 +615,18 @@ class _AsociacionFormState extends State<AsociacionForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.asociacion == null ? "Nueva Asociación" : "Editar Asociación",
+                    widget.personal == null ? "Nuevo Personal" : "Editar Personal",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.black87),
                   ),
-                  const SizedBox(height: 5),
+                   const SizedBox(height: 5),
                   Text(
-                    "Actualiza la información completa de la asociación",
+                    "Actualiza la información del funcionario",
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
-            Container(
+             Container(
               decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle),
               child: IconButton(
                 icon: const Icon(Icons.close, color: Colors.grey, size: 20),
@@ -613,132 +635,145 @@ class _AsociacionFormState extends State<AsociacionForm> {
             )
           ],
         ),
-        const SizedBox(height: 20),
-        
-        // SCROLLABLE CONTENT
+         const SizedBox(height: 20),
+
+        // SCROLLABLE BODY
         Expanded(
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Imagen Circular + FAB
-                  Center(
+                  // Imagen
+                  GestureDetector(
+                    onTap: _pickImage,
                     child: Stack(
                       children: [
                          Container(
                            decoration: BoxDecoration(
-                             shape: BoxShape.circle,
-                             border: Border.all(color: Colors.grey.shade200, width: 4),
-                             boxShadow: [
-                               BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5))
-                             ]
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey.shade200, width: 4),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5))
+                              ]
                            ),
                            child: CircleAvatar(
-                             radius: 50,
-                             backgroundColor: Colors.white,
-                             child: ClipOval(
-                               child: _imageFile != null
-                                  ? Image.file(_imageFile!, width: 100, height: 100, fit: BoxFit.cover)
-                                  : (widget.asociacion != null
-                                      ? ImageHelper.getCircleAvatar(
-                                          apiPath: widget.asociacion!['foto'],
-                                          name: widget.asociacion!['nombre'],
-                                          alias: widget.asociacion!['alias'],
-                                          type: 'asociacion',
-                                          radius: 50
-                                        )
-                                      : const Icon(Icons.camera_alt, size: 40, color: Colors.blue)),
-                             ),
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: _imageFile != null 
+                              ? Image.file(_imageFile!, width: 100, height: 100, fit: BoxFit.cover)
+                              : (widget.personal != null && widget.personal!['foto'] != null && widget.personal!['foto'].toString().isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: widget.personal!['foto'].toString().startsWith('http') 
+                                          ? widget.personal!['foto'] 
+                                          : "${ApiService.baseUrl.replaceAll('/api', '')}${widget.personal!['foto']}", 
+                                      width: 100, 
+                                      height: 100, 
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) => const Icon(Icons.person, size: 40, color: Colors.blue),
+                                    )
+                                  : const Icon(Icons.camera_alt, size: 40, color: Colors.blue)),
+                            ),
                            ),
                          ),
                          Positioned(
-                           bottom: 0,
-                           right: 0,
-                           child: GestureDetector(
-                             onTap: _pickImage,
-                             child: Container(
-                               padding: const EdgeInsets.all(8),
-                               decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                               child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
-                             ),
-                           ),
-                         )
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+                              child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
+                            ),
+                          )
                       ],
                     ),
                   ),
                   const SizedBox(height: 25),
-                  
-                  _buildSectionTitle("Información General"),
-                  _buildTextField(_nombreCtrl, "Nombre *", validator: (v) => v!.isEmpty ? 'Requerido' : null),
-                  const SizedBox(height: 12),
-                  _buildTextField(_aliasCtrl, "Alias / Sigla"),
 
+                  _buildSection("Información Principal"),
+                   _buildTextField(_nombreCtrl, "Nombre Completo", validator: (v) => v!.isEmpty ? 'Req' : null),
+                  const SizedBox(height: 12),
+                   _buildTextField(_cargoCtrl, "Cargo Institucional (Ej. Director Ejecutivo)", validator: (v) => v!.isEmpty ? 'Req' : null),
+
+                  const SizedBox(height: 20),
+                   _buildSection("Contacto"),
+                   Row(children: [
+                     Expanded(child: _buildTextField(_celularCtrl, "Celular")),
+                   ]),
+                   const SizedBox(height: 12),
+                   Row(children: [
+                     Expanded(child: _buildTextField(_correoCtrl, "Email Institucional")),
+                   ]),
+
+                  // Bottom space for consistent scrolling
                   const SizedBox(height: 30),
                   
-                  // Buttons are handled below the scrollview in a full screen modal?? 
-                  // No, we are inside a limited container, let's keep them here but maybe sticky bottom? 
-                  // For simplicity, keep them at the bottom of scroll view.
+                  // Botones Fixed Area (dentro del scroll por diseño modal ajustado)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                             side: BorderSide(color: Colors.grey.shade300)
+                          ),
+                          child: const Text("Cancelar", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _isSaving ? null : _save,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF43A047), // Green Save
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
+                          ),
+                          child: _isSaving 
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Text("Guardar", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
           ),
         ),
-
-        // FIXED BOTTOM BUTTONS
-        const SizedBox(height: 15),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: _isSaving ? null : _save,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF43A047), // Green
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              elevation: 0,
-            ),
-            child: _isSaving 
-              ? const SizedBox(width: 25, height: 25, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Text("Guardar", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          width: double.infinity,
-           height: 45,
-          child: TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), foregroundColor: Colors.grey),
-            child: const Text("Cancelar", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          ),
-        )
       ],
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSection(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(title, style: const TextStyle(color: Color(0xFF37474F), fontWeight: FontWeight.bold, fontSize: 16)),
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF37474F))),
+        ],
+      ),
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String label, {String? Function(String?)? validator}) {
+  Widget _buildTextField(TextEditingController controller, String label, {String? Function(String?)? validator}) {
     return TextFormField(
-      controller: ctrl,
-      decoration: _inputDec(label),
+      controller: controller,
       validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.blue, width: 1)),
+      ),
     );
   }
-
-  InputDecoration _inputDec(String label) => InputDecoration(
-    labelText: label, // We use hintText inside styling? No, labelText makes it float.
-    hintText: label,
-    filled: true,
-    fillColor: Colors.grey.shade100, // Lighter background
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none), // Clearer border
-    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-    floatingLabelStyle: const TextStyle(color: Colors.blue),
-  );
 }

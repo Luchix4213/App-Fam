@@ -21,13 +21,13 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 14, // Version incrementada para sync fields
+      version: 17, // Version incrementada para limpiar campos de asociaciones
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         // Borrar tablas viejas si existen
         await db.execute("DROP TABLE IF EXISTS ministros");
         await db.execute("DROP TABLE IF EXISTS asociaciones");
-        await db.execute("DROP TABLE IF EXISTS departamentos");
+        await db.execute("DROP TABLE IF EXISTS personal");
         // Crear de nuevo
         await _createDB(db, newVersion);
       },
@@ -61,28 +61,21 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY,
       alias TEXT,
       nombre TEXT NOT NULL,
-      presidente TEXT,
-      municipio TEXT,
-      telefono_personal TEXT,
-      telefono_publico TEXT,
-      telefono_fax TEXT,
-      correo_personal TEXT,
-      correo_publico TEXT,
-      tipo TEXT,
-      direccion TEXT,
-      estado TEXT,
-      id_departamento INTEGER,
-      foto TEXT
+      foto TEXT,
+      estado TEXT DEFAULT 'activo'
     )
     ''');
 
-    // Tabla Departamentos
+    // Tabla Personal (Administrativo)
     await db.execute('''
-    CREATE TABLE departamentos (
+    CREATE TABLE personal (
       id INTEGER PRIMARY KEY,
       nombre TEXT NOT NULL,
-      estado TEXT,
-      foto TEXT
+      cargo TEXT NOT NULL,
+      celular TEXT,
+      correo_electronico TEXT,
+      foto TEXT,
+      estado TEXT
     )
     ''');
 
@@ -118,8 +111,19 @@ class DatabaseHelper {
   Future<void> syncMinistros(List<dynamic> list) async {
     final db = await instance.database;
     Batch batch = db.batch();
+    
+    // Solo permitir las columnas públicas que existen (omitiendo datos personales sensibles)
+    final List<String> validColumns = [
+      'id', 'alias', 'nombre', 'municipio', 'telefono_publico',
+      'telefono_fax', 'correo_publico', 'direccion', 'tipo_miembro',
+      'estado', 'id_asociacion', 'foto'
+    ];
+
     for (var item in list) {
-       batch.insert('ministros', item, conflictAlgorithm: ConflictAlgorithm.replace);
+       Map<String, dynamic> cleanItem = Map<String, dynamic>.from(item);
+       cleanItem.removeWhere((key, value) => !validColumns.contains(key) || value is Map || value is List);
+       
+       batch.insert('ministros', cleanItem, conflictAlgorithm: ConflictAlgorithm.replace);
     }
     await batch.commit(noResult: true);
   }
@@ -133,28 +137,44 @@ class DatabaseHelper {
   Future<void> syncAsociaciones(List<dynamic> list) async {
     final db = await instance.database;
     Batch batch = db.batch();
+    
+    // Solo permitir las columnas públicas que existen en la tabla sqlite (omitiendo createdAt y datos personales)
+    final List<String> validColumns = [
+      'id', 'alias', 'nombre', 'estado', 'foto'
+    ];
+
     for (var item in list) {
-       batch.insert('asociaciones', item, conflictAlgorithm: ConflictAlgorithm.replace);
+       Map<String, dynamic> cleanItem = Map<String, dynamic>.from(item);
+       cleanItem.removeWhere((key, value) => !validColumns.contains(key) || value is Map || value is List);
+       
+       batch.insert('asociaciones', cleanItem, conflictAlgorithm: ConflictAlgorithm.replace);
     }
     await batch.commit(noResult: true);
   }
 
-  // Departamentos
-  Future<int> insertOrUpdateDepartamento(Map<String, dynamic> row) async {
+  // Personal
+  Future<int> insertOrUpdatePersonal(Map<String, dynamic> row) async {
     final db = await instance.database;
-    return await db.insert('departamentos', row, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert('personal', row, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> syncDepartamentos(List<dynamic> list) async {
+  Future<void> syncPersonal(List<dynamic> list) async {
     final db = await instance.database;
     Batch batch = db.batch();
+    
+    final List<String> validColumns = [
+      'id', 'nombre', 'cargo', 'celular', 'correo_electronico',
+      'foto', 'estado'
+    ];
+
     for (var item in list) {
-       batch.insert('departamentos', item, conflictAlgorithm: ConflictAlgorithm.replace);
+       Map<String, dynamic> cleanItem = Map<String, dynamic>.from(item);
+       cleanItem.removeWhere((key, value) => !validColumns.contains(key) || value is Map || value is List);
+       
+       batch.insert('personal', cleanItem, conflictAlgorithm: ConflictAlgorithm.replace);
     }
     await batch.commit(noResult: true);
   }
-
-  // --- DELETE ALL METHODS (For clean sync) ---
   Future<void> deleteAllMinistros() async {
     final db = await instance.database;
     await db.delete('ministros');
@@ -165,26 +185,23 @@ class DatabaseHelper {
     await db.delete('asociaciones');
   }
 
-  Future<void> deleteAllDepartamentos() async {
+  Future<void> deleteAllPersonal() async {
     final db = await instance.database;
-    await db.delete('departamentos');
+    await db.delete('personal');
   }
+
+
 
   // --- QUERY METHODS ---
 
-  Future<List<Map<String, dynamic>>> getAllDepartamentos() async {
+  Future<List<Map<String, dynamic>>> getAllAsociaciones() async {
     final db = await instance.database;
-    return await db.query('departamentos', orderBy: 'nombre ASC');
+    return await db.query('asociaciones', orderBy: 'nombre ASC');
   }
 
-  Future<List<Map<String, dynamic>>> getAsociacionesByDepto(int deptoId) async {
+  Future<List<Map<String, dynamic>>> getAllPersonal() async {
     final db = await instance.database;
-    return await db.query(
-      'asociaciones', 
-      where: 'id_departamento = ?', 
-      whereArgs: [deptoId],
-      orderBy: 'nombre ASC'
-    );
+    return await db.query('personal', orderBy: 'nombre ASC');
   }
 
   Future<List<Map<String, dynamic>>> getMinistrosByAsoc(int asocId) async {
@@ -210,8 +227,7 @@ class DatabaseHelper {
     // sino via asociacion -> departamento.
     // Si la query requiere JOINs, sqflite rawQuery es mejor.
     // Asumiremos que por ahora 'departamento' puede estar denormalizado o requeriremos cambiar esto.
-    // Originalmente la tabla tenia 'municipio', no veo departamento.
-    // El codigo anterior usaba 'departamento' en el where, pero la tabla NO tenia campo departamento (ver step 49).
+    // No department column in asociaciones (ver step 49).
     // Ah, el step 49 dice: `where += " AND departamento = ?";` pero la tabla CREATE NO TIENE DEPARTAMENTO.
     // Eso significa que el código anterior ya estaba roto o yo leí mal.
     // Revisando step 49:

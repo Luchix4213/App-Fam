@@ -7,13 +7,9 @@ import {
   getAsociacion,
   updateAsociacion,
   deleteAsociacion,
-  getAsociacionesByDepartamento,
 } from "../controllers/asociacion.controller.js";
 
 const router = express.Router();
-
-// Ruta pública para obtener asociaciones por departamento
-router.get("/departamento/:departamentoId", getAsociacionesByDepartamento);
 
 // Rutas administrativas
 router.get("/", authMiddleware, listAsociaciones);

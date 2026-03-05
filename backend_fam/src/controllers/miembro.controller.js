@@ -1,4 +1,4 @@
-import { Miembro, Asociacion, Departamento } from "../models/index.js";
+import { Miembro, Asociacion } from "../models/index.js";
 import { uploadStream, deleteImage } from "../config/cloudinary.config.js";
 
 const deleteOldImage = async (imagePath) => {
@@ -42,7 +42,7 @@ export const listMiembros = async (req, res) => {
     const items = await Miembro.findAll({
       where: where,
       include: [
-        { model: Asociacion, include: [Departamento] },
+        { model: Asociacion },
       ],
       order: [['nombre', 'ASC']]
     });
@@ -56,7 +56,7 @@ export const getMiembro = async (req, res) => {
   try {
     const item = await Miembro.findByPk(req.params.id, {
       include: [
-        { model: Asociacion, include: [Departamento] },
+        { model: Asociacion },
       ],
     });
     if (!item) return res.status(404).json({ message: "No encontrado" });

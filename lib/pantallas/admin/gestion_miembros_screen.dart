@@ -23,11 +23,10 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
   bool _isLoading = false;
   List<dynamic> _miembros = [];
   List<dynamic> _asociaciones = [];
-  List<dynamic> _departamentos = [];
   List<dynamic> _filteredMiembros = [];
   final TextEditingController _searchCtrl = TextEditingController();
   String _filterState = 'activo';
-  int? _filterDepartamentoId; // null = Todos los departamentos
+  String _filterAsociacion = 'todas';
 
   @override
   void initState() {
@@ -53,14 +52,12 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
         final muni = (m['municipio'] ?? '').toLowerCase();
         final matchesText = nombre.contains(query) || alias.contains(query) || asoc.contains(query) || muni.contains(query);
         
-        // Filtro por departamento (cross-table: miembro -> Asociacion -> Departamento)
-        bool matchesDepto = true;
-        if (_filterDepartamentoId != null) {
-          final deptoId = m['Asociacion']?['Departamento']?['id'] as int?;
-          matchesDepto = deptoId == _filterDepartamentoId;
+        bool matchesAsoc = true;
+        if (_filterAsociacion != 'todas') {
+          matchesAsoc = m['id_asociacion'].toString() == _filterAsociacion;
         }
-        
-        return matchesText && matchesDepto;
+
+        return matchesText && matchesAsoc;
       }).toList();
     });
   }
@@ -71,12 +68,10 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
       final futures = await Future.wait([
         ApiService.getAllMiembros(estado: _filterState),
         ApiService.getAllAsociaciones(),
-        ApiService.getDepartamentos(isAdmin: true, estado: 'todos'),
       ]);
 
       final miembrosRes = futures[0];
       final asocRes = futures[1];
-      final deptosRes = futures[2];
 
       if (miembrosRes['success'] == true) {
         setState(() {
@@ -87,11 +82,6 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
       if (asocRes['success'] == true) {
         setState(() {
           _asociaciones = asocRes['data'];
-        });
-      }
-      if (deptosRes['success'] == true) {
-        setState(() {
-          _departamentos = deptosRes['data'];
         });
       }
     } catch (e) {
@@ -324,15 +314,15 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
                          height: 70,
                          padding: const EdgeInsets.symmetric(horizontal: 20),
                          decoration: BoxDecoration(
-                           gradient: const LinearGradient(
-                             colors: [Color(0xFF0277BD), Color(0xFF00C853)],
+                           gradient: LinearGradient(
+                             colors: [appColores.dashTealStart, Colors.white.withOpacity(0.85)],
                              begin: Alignment.centerLeft,
                              end: Alignment.centerRight,
                            ),
                            borderRadius: BorderRadius.circular(20),
                            boxShadow: [
                              BoxShadow(
-                               color: const Color(0xFF0277BD).withOpacity(0.3),
+                               color: appColores.dashTealStart.withOpacity(0.3),
                                blurRadius: 15,
                                offset: const Offset(0, 8),
                              )
@@ -391,64 +381,95 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
 
                 const SizedBox(height: 15),
 
-                 // FILTROS: ESTADO + DEPARTAMENTO
+                 // FILTROS: ESTADO + ASOCIACION
                  Padding(
                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                   child: Wrap(
-                     spacing: 16,
-                     runSpacing: 8,
-                     crossAxisAlignment: WrapCrossAlignment.center,
+                   child: Row(
                      children: [
                        // Filtro Estado
-                       Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           const Text("Estado: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                           const SizedBox(width: 6),
-                           DropdownButton<String>(
-                             value: _filterState,
-                             underline: Container(),
-                             style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-                             items: const [
-                               DropdownMenuItem(value: 'activo', child: Text("Activos")),
-                               DropdownMenuItem(value: 'inactivo', child: Text("Inactivos")),
-                               DropdownMenuItem(value: 'todos', child: Text("Todos")),
-                             ],
-                             onChanged: (val) {
-                               if (val != null) {
-                                 setState(() => _filterState = val);
-                                 _loadData();
-                               }
-                             },
+                       Expanded(
+                         flex: 4,
+                         child: Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 12),
+                           decoration: BoxDecoration(
+                             color: Colors.white,
+                             borderRadius: BorderRadius.circular(10),
+                             border: Border.all(color: Colors.grey.shade200)
                            ),
-                         ],
-                       ),
-                       // Filtro Departamento
-                       if (_departamentos.isNotEmpty)
-                         Row(
-                           mainAxisSize: MainAxisSize.min,
-                           children: [
-                             const Text("Depto: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                             const SizedBox(width: 6),
-                             DropdownButton<int?>(
-                               value: _filterDepartamentoId,
-                               underline: Container(),
-                               style: const TextStyle(color: Color(0xFF00897B), fontWeight: FontWeight.bold),
-                               hint: const Text("Todos", style: TextStyle(color: Color(0xFF00897B), fontWeight: FontWeight.bold)),
-                               items: [
-                                 const DropdownMenuItem<int?>(value: null, child: Text("Todos")),
-                                 ..._departamentos.map<DropdownMenuItem<int?>>((d) => DropdownMenuItem<int?>(
-                                   value: d['id'] as int,
-                                   child: Text(d['nombre'], overflow: TextOverflow.ellipsis),
-                                 )),
-                               ],
-                               onChanged: (val) {
-                                 setState(() => _filterDepartamentoId = val);
-                                 _filter();
-                               },
-                             ),
-                           ],
+                           child: Row(
+                             children: [
+                               const Icon(Icons.check_circle_outline, size: 16, color: Colors.grey),
+                               const SizedBox(width: 8),
+                               Expanded(
+                                 child: DropdownButtonHideUnderline(
+                                   child: DropdownButton<String>(
+                                     value: _filterState,
+                                     isExpanded: true,
+                                     style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
+                                     icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                                     items: const [
+                                       DropdownMenuItem(value: 'activo', child: Text("Activos")),
+                                       DropdownMenuItem(value: 'inactivo', child: Text("Inactivos")),
+                                       DropdownMenuItem(value: 'todos', child: Text("Todos")),
+                                     ],
+                                     onChanged: (val) {
+                                       if (val != null) {
+                                         setState(() => _filterState = val);
+                                         _loadData();
+                                       }
+                                     },
+                                   ),
+                                 ),
+                               ),
+                             ],
+                           ),
                          ),
+                       ),
+                       const SizedBox(width: 10),
+                       // Filtro Asociación
+                       Expanded(
+                         flex: 5,
+                         child: Container(
+                           padding: const EdgeInsets.symmetric(horizontal: 12),
+                           decoration: BoxDecoration(
+                             color: Colors.white,
+                             borderRadius: BorderRadius.circular(10),
+                             border: Border.all(color: Colors.grey.shade200)
+                           ),
+                           child: Row(
+                             children: [
+                               const Icon(Icons.business, size: 16, color: Colors.grey),
+                               const SizedBox(width: 8),
+                               Expanded(
+                                 child: DropdownButtonHideUnderline(
+                                   child: DropdownButton<String>(
+                                     value: _filterAsociacion,
+                                     isExpanded: true,
+                                     style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 13),
+                                     icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                                     items: [
+                                       const DropdownMenuItem(value: 'todas', child: Text("Todas")),
+                                       ..._asociaciones.map((a) => DropdownMenuItem(
+                                         value: a['id'].toString(),
+                                         child: Text(
+                                            a['alias'] ?? (a['nombre'].toString().length > 15 ? a['nombre'].toString().substring(0, 15) + '...' : a['nombre']),
+                                            overflow: TextOverflow.ellipsis,
+                                         ),
+                                       )),
+                                     ],
+                                     onChanged: (val) {
+                                       if (val != null) {
+                                         setState(() => _filterAsociacion = val);
+                                         _filter();
+                                       }
+                                     },
+                                   ),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                       ),
                      ],
                    ),
                  ),
@@ -511,7 +532,7 @@ class _GestionMiembrosScreenState extends State<GestionMiembrosScreen> {
                   radius: 35, // Prominent size
                   municipio: m['municipio'],
                   tipoMiembro: tipo,
-                  deptoName: m['Asociacion']?['Departamento']?['nombre']
+                  deptoName: null
                 ),
               ),
               const SizedBox(width: 16),
@@ -765,7 +786,7 @@ class _MiembroFormState extends State<MiembroForm> {
                                       radius: 50,
                                       municipio: widget.miembro!['municipio'],
                                       tipoMiembro: widget.miembro!['tipo_miembro'],
-                                      deptoName: _getDeptoName(),
+                                      deptoName: null,
                                     )
                                   : const Icon(Icons.camera_alt, size: 40, color: Colors.blue)),
                             ),
@@ -792,7 +813,7 @@ class _MiembroFormState extends State<MiembroForm> {
                     menuMaxHeight: 400,
                     items: widget.asociaciones.map<DropdownMenuItem<int>>((a) => DropdownMenuItem(
                       value: a['id'], 
-                      child: Text(a['nombre'], overflow: TextOverflow.ellipsis, maxLines: 1),
+                      child: Text(a['nombre'], softWrap: true, style: const TextStyle(fontSize: 13)),
                     )).toList(),
                     onChanged: (v) => setState(() => _selectedAsocId = v),
                     decoration: _inputDec("Asociación"),
@@ -830,28 +851,11 @@ class _MiembroFormState extends State<MiembroForm> {
 
                   const SizedBox(height: 20),
                   _buildSection("Estado y Tipo"),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _tipoMiembro,
-                          items: ['ALCALDE', 'CONCEJALA', 'AMBES'].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(), // <--- CORREGIDO AQUÍ
-                          onChanged: (v) => setState(() => _tipoMiembro = v!),
-                          decoration: _inputDec("Tipo"),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        children: [
-                          const Text("Estado", style: TextStyle(fontSize: 12, color: Colors.grey)),
-                          Switch(
-                            value: _estado == 'activo', 
-                            onChanged: (val) => setState(() => _estado = val ? 'activo' : 'inactivo'),
-                            activeColor: Colors.green,
-                          ),
-                        ],
-                      )
-                    ],
+                  DropdownButtonFormField<String>(
+                    value: _tipoMiembro,
+                    items: ['ALCALDE', 'CONCEJALA', 'AMBES'].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(), // <--- CORREGIDO AQUÍ
+                    onChanged: (v) => setState(() => _tipoMiembro = v!),
+                    decoration: _inputDec("Tipo"),
                   ),
 
                   // Bottom space for consistent scrolling
@@ -918,18 +922,4 @@ class _MiembroFormState extends State<MiembroForm> {
   }
 
 
-  String? _getDeptoName() {
-    if (widget.miembro == null) return null;
-    final direct = widget.miembro!['Asociacion']?['Departamento']?['nombre'];
-    if (direct != null) return direct;
-    
-    final asocId = widget.miembro!['id_asociacion'];
-    if (asocId != null && widget.asociaciones.isNotEmpty) {
-      try {
-        final asoc = widget.asociaciones.firstWhere( (a) => a['id'] == asocId, orElse: () => null);
-        return asoc?['Departamento']?['nombre'];
-      } catch (_) { }
-    }
-    return null;
-  }
 }

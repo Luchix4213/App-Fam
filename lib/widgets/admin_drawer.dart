@@ -3,10 +3,10 @@ import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/pantallas/login.dart';
 import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
-import 'package:fam_intento1/pantallas/admin/gestion_departamentos_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_asociaciones_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_miembros_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_usuarios_screen.dart';
+import 'package:fam_intento1/pantallas/admin/gestion_personal_screen.dart';
 import 'package:fam_intento1/pantallas/Inicio.dart';
 
 class AdminDrawer extends StatelessWidget {
@@ -112,12 +112,7 @@ class AdminDrawer extends StatelessWidget {
                   isActive: context.widget.toString() == 'DashboardScreen' || currentRoute == 'Dashboard', // Simple check
                   onTap: () => _navigate(context, const DashboardScreen()),
                 ),
-                _DrawerItem(
-                  icon: Icons.business_outlined,
-                  text: "Departamentos",
-                  isActive: context.widget.toString() == 'GestionDepartamentosScreen' || currentRoute == 'Departamentos',
-                  onTap: () => _navigate(context, const GestionDepartamentosScreen()),
-                ),
+
                 _DrawerItem(
                   icon: Icons.layers_outlined,
                   text: "Asociaciones",
@@ -129,6 +124,12 @@ class AdminDrawer extends StatelessWidget {
                   text: "Miembros",
                   isActive: context.widget.toString() == 'GestionMiembrosScreen' || currentRoute == 'Miembros',
                   onTap: () => _navigate(context, const GestionMiembrosScreen()),
+                ),
+                _DrawerItem(
+                  icon: Icons.badge_outlined,
+                  text: "Personal FAM",
+                  isActive: context.widget.toString() == 'GestionPersonalScreen' || currentRoute == 'Personal',
+                  onTap: () => _navigate(context, const GestionPersonalScreen()),
                 ),
                 if (role == 'ADMIN')
                   _DrawerItem(

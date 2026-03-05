@@ -96,16 +96,24 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    // Generar token JWT
+    // Generar Access Token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "30m" }
+    );
+
+    // Generar Refresh Token
+    const refreshToken = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
     );
 
     res.json({
       message: "Login exitoso",
       token,
+      refreshToken,
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
@@ -149,21 +157,54 @@ export const googleLogin = async (req, res) => {
       });
     }
 
-    // Generar el Token JWT interno del sistema (El que ya usamos)
+    // Generar el Access Token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "30m" }
+    );
+
+    // Generar Refresh Token
+    const refreshToken = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
     );
 
     res.json({
       message: "Login con Google exitoso",
       token,
+      refreshToken,
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
 
   } catch (err) {
     console.error("Error en googleLogin:", err);
     res.status(500).json({ message: "Error verificando token de Google: " + err.message });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(403).json({ message: "Se requiere un refreshToken" });
+
+    jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
+      if (err) return res.status(401).json({ message: "RefreshToken expirado o inválido" });
+
+      const user = await User.findByPk(decoded.id);
+      if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+      const newAccessToken = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "30m" }
+      );
+
+      res.json({ token: newAccessToken });
+    });
+  } catch (err) {
+    console.error("Error renovando token:", err);
+    res.status(500).json({ message: err.message });
   }
 };

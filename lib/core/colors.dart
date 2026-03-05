@@ -68,9 +68,9 @@ class appColores{
   }
 
   // --- NUEVOS COLORES PARA REDISEÑO ---
-  // Header: Teal a Verde (Azul verdoso a Verde)
-  static const Color headerTealStart = Color(0xFF00796B); // Teal 700
-  static const Color headerTealEnd = Color(0xFF4CAF50);   // Green 500
+  // Header: Teal a Verde (Azul verdoso a Verde) -> NOW PURE BLUES
+  static const Color headerTealStart = Color(0xFF135685); // Dark Blue (Pantone P 108-7 C)
+  static const Color headerTealEnd = Color(0xFF6EC6D8);   // Light Blue (Pantone P 121-5 C)
   
   // Card "Departamentos": Verde Lima Vibrante
   static const Color cardLimeStart = Color(0xFF43A047);   // Green 600
@@ -87,8 +87,8 @@ class appColores{
   static const Color badgeBlueLight = Color(0xFFE3F2FD);
   
   // Dashboard Admin (Refined - Less 'Chillon', more Sober/Professional)
-  static const Color dashTealStart = Color(0xFF00695C); // Deep Teal
-  static const Color dashTealEnd = Color(0xFF26A69A);   // Softer Teal
+  static const Color dashTealStart = Color(0xFF135685); // Deep Blue (Pantone P 108-7 C)
+  static const Color dashTealEnd = Color(0xFF6EC6D8);   // Soft Light Blue (Pantone P 121-5 C)
   
   // Drawer
   static const Color drawerActiveBg = Color(0xFF1E88E5); // Blue for active item
@@ -97,6 +97,19 @@ class appColores{
 
   static const Color iconOrange = Color(0xFFFF9800);
   static const Color iconBgOrange = Color(0xFFFFF3E0);
-  static const Color iconGreen = Color(0xFF43A047); // Darker Green
-  static const Color iconBgGreen = Color(0xFFE8F5E9);
+  static const Color iconGreen = Color(0xFF135685); // Changed to Blue to match the new professional theme
+  static const Color iconBgGreen = Color(0xFFE3F2FD); // Light blue background
+
+  // === NUEVOS COLORES PARA EL GRADIENTE AZUL (como en la foto) ===
+  static const Color blueGradientTop    = Color(0xFF0A3D62);   // Azul oscuro superior
+  static const Color blueGradientMiddle = Color(0xFF1E5A8A);   // Azul medio
+  static const Color blueGradientBottom = Color(0xFF6EC1E4);   // Azul claro inferior
+
+  // (Opcional) Color para texto blanco sobre el gradiente azul
+  static const Color textWhiteOnBlue = Colors.white;
+
+  // Gradiente azul para pantalla de Asociaciones (similar a la foto deseada)
+  static const Color assocGradientTop    = Color(0xFF135685);    // Azul oscuro/celeste principal (R19, G86, B133)
+  static const Color assocGradientMiddle = Color(0xFF2A6FA8);    // Azul medio para transición suave
+  static const Color assocGradientBottom = Color(0xFFEDF2F7);    // Gris claro casi blanco (como fondo de la foto)
 }

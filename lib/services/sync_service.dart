@@ -3,94 +3,85 @@ import 'package:fam_intento1/database/databese_helper.dart';
 
 class SyncService {
   
-  // Sincronizar todo (Departamentos -> Asociaciones -> Miembros)
+  // Sincronizar todo (Asociaciones -> Miembros)
   static Future<void> syncAll() async {
     print("----------------------------------------------------------------");
-    print("[SyncService] Iniciando sincronización completa...");
+    print("[SyncService] Iniciando sincronización completa (Sin Departamentos)...");
     
     try {
-      // 1. Obtener Departamentos
-      print("[SyncService] 1. Solicitando DEPARTAMENTOS a API...");
-      final deptosRes = await ApiService.getDepartamentos();
-      print("[SyncService] Respuesta DEPARTAMENTOS: success=${deptosRes['success']}");
+      // 1. OBTENER ASOCIACIONES
+      print("[SyncService] Solicitando ASOCIACIONES a API...");
+      final asocRes = await ApiService.getAllAsociaciones();
       
-      if (deptosRes['success'] == true) {
-        final List<dynamic> departamentos = deptosRes['data'];
-        print("[SyncService] Recibidos ${departamentos.length} departamentos.");
+      if (asocRes['success'] == true) {
+        final List<dynamic> asociaciones = asocRes['data'];
+        print("[SyncService] Recibidas \${asociaciones.length} asociaciones.");
         
-        // LIMPIEZA TOTAL ANTES DE INSERTAR (Para eliminar inactivos/borrados)
-        await DatabaseHelper.instance.deleteAllDepartamentos();
+        // Sanitizar
+        List<Map<String, dynamic>> asocClean = asociaciones.map((item) {
+          Map<String, dynamic> map = Map<String, dynamic>.from(item);
+          map.removeWhere((key, value) => value is Map || value is List);
+          return map;
+        }).toList();
+        
+        // REGLA CLAVE: Solo borrar la base de datos si logramos traer datos nuevos (Hay Internet)
         await DatabaseHelper.instance.deleteAllAsociaciones();
-        await DatabaseHelper.instance.deleteAllMinistros();
-        print("[SyncService] Tablas locales limpiadas.");
-
-        await DatabaseHelper.instance.syncDepartamentos(departamentos);
-        print("[SyncService] Departamentos guardados en SQLite.");
-        
-        // 2. Iterar departamentos para buscar asociaciones
-        for (var depto in departamentos) {
-          final int deptoId = depto['id'];
-          // print("[SyncService] Solicitando ASOCIACIONES para Depto $deptoId...");
-          final asocRes = await ApiService.getAsociacionesByDepartamento(deptoId);
-          
-          if (asocRes['success'] == true) {
-            final List<dynamic> asociaciones = asocRes['data'];
-             print("[SyncService] Depto $deptoId: ${asociaciones.length} asociaciones.");
-            
-            // SANITIZAR DATOS DE ASOCIACIONES (Aplanar mapa)
-            List<Map<String, dynamic>> asociacionesClean = asociaciones.map((item) {
-              // Convertir a Mapa editable
-              Map<String, dynamic> map = Map<String, dynamic>.from(item);
-              
-              // 1. Asegurar foreign key id_departamento
-              map['id_departamento'] = deptoId; 
-              
-              // 2. Eliminar objetos anidados que rompen SQLite (e.g. "Departamento": {...})
-              map.removeWhere((key, value) => value is Map || value is List);
-              
-              return map;
-            }).toList();
-
-            await DatabaseHelper.instance.syncAsociaciones(asociacionesClean);
-            
-            // 3. Iterar asociaciones para buscar miembros
-            for (var asoc in asociaciones) {
-              final int asocId = asoc['id'];
-              // print("[SyncService] Solicitando MIEMBROS para Asoc $asocId...");
-              final miembroRes = await ApiService.getMiembrosByAsociacion(asocId);
-              
-              if (miembroRes['success'] == true) {
-                final List<dynamic> miembros = miembroRes['data'];
-                // print("[SyncService]    Asoc $asocId: ${miembros.length} miembros.");
-                
-                 // SANITIZAR DATOS DE MIEMBROS
-                List<Map<String, dynamic>> miembrosClean = miembros.map((item) {
-                  Map<String, dynamic> map = Map<String, dynamic>.from(item);
-                  
-                  // 1. Asegurar foreign key id_asociacion
-                  map['id_asociacion'] = asocId;
-                  
-                  // 2. Eliminar anidados (e.g. "Asociacion": {...})
-                  map.removeWhere((key, value) => value is Map || value is List);
-                  
-                  return map;
-                }).toList();
-
-                await DatabaseHelper.instance.syncMinistros(miembrosClean);
-              } else {
-                print("[SyncService] ERROR obteniendo miembros para Asoc $asocId: ${miembroRes['message']}");
-              }
-            }
-          } else {
-             print("[SyncService] ERROR obteniendo asociaciones para Depto $deptoId: ${asocRes['message']}");
-          }
-        }
-        print("[SyncService] Sincronización completada con éxito.");
+        await DatabaseHelper.instance.syncAsociaciones(asocClean);
+        print("[SyncService] Asociaciones locales actualizadas exitosamente.");
       } else {
-        print("[SyncService] ERROR obteniendo departamentos: ${deptosRes['message']}");
+         print("[SyncService] FALLO en asociaciones (Posible Offline): \${asocRes['message']}. Conservando SQLite local intacto.");
       }
+
+      // 2. OBTENER MIEMBROS
+      print("[SyncService] Solicitando MIEMBROS a API...");
+      final miembroRes = await ApiService.getAllMiembros();
+
+      if (miembroRes['success'] == true) {
+        final List<dynamic> miembros = miembroRes['data'];
+        print("[SyncService] Recibidos \${miembros.length} miembros.");
+
+        // Sanitizar
+        List<Map<String, dynamic>> miembrosClean = miembros.map((item) {
+          Map<String, dynamic> map = Map<String, dynamic>.from(item);
+          map.removeWhere((key, value) => value is Map || value is List);
+          return map;
+        }).toList();
+
+        // REGLA CLAVE: Solo borrar si hay conexión exitosa
+        await DatabaseHelper.instance.deleteAllMinistros();
+        await DatabaseHelper.instance.syncMinistros(miembrosClean);
+        print("[SyncService] Miembros locales actualizados exitosamente.");
+      } else {
+        print("[SyncService] FALLO en miembros (Posible Offline): \${miembroRes['message']}. Conservando SQLite local intacto.");
+      }
+      
+      // 3. OBTENER PERSONAL
+      print("[SyncService] Solicitando PERSONAL a API...");
+      final personalRes = await ApiService.getAllPersonal();
+
+      if (personalRes['success'] == true) {
+        final List<dynamic> personalData = personalRes['data'];
+        print("[SyncService] Recibidos ${personalData.length} registros de personal.");
+
+        // Sanitizar
+        List<Map<String, dynamic>> perClean = personalData.map((item) {
+          Map<String, dynamic> map = Map<String, dynamic>.from(item);
+          map.removeWhere((key, value) => value is Map || value is List);
+          return map;
+        }).toList();
+
+        // REGLA CLAVE: Solo borrar si hay conexión exitosa
+        await DatabaseHelper.instance.deleteAllPersonal();
+        await DatabaseHelper.instance.syncPersonal(perClean);
+        print("[SyncService] Personal local actualizado exitosamente.");
+      } else {
+        print("[SyncService] FALLO en personal (Posible Offline): ${personalRes['message']}. Conservando SQLite local intacto.");
+      }
+
+      print("[SyncService] Proceso de sincronización finalizado.");
     } catch (e) {
-      print("[SyncService] CRITICAL ERROR durante la sincronización: $e");
+      print("[SyncService] CRITICAL ERROR / NETWORK EXCEPTION durante la sincronización: \$e");
+      print("[SyncService] La limpieza total fue abortada para proteger el caché Offline.");
     } finally {
       print("----------------------------------------------------------------");
     }

@@ -27,16 +27,16 @@ class GradientScaffold extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            appColores.gradientTop,
-            Colors.white,
-            appColores.gradientBottom,
+            appColores.blueGradientTop,     // ← Azul oscuro (arriba)
+            appColores.blueGradientMiddle,  // ← Azul medio
+            appColores.blueGradientBottom,  // ← Azul claro (abajo)
           ],
-          stops: [0.0, 0.5, 1.0], // White in the middle for a clean look
+          stops: [0.0, 0.4, 1.0],
         ),
       ),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.transparent, // Important!
+        backgroundColor: Colors.transparent,
         appBar: appBar,
         body: body,
         bottomNavigationBar: bottomNavigationBar,

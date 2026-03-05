@@ -5,6 +5,7 @@ import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/pantallas/register.dart';
 import 'package:fam_intento1/services/sync_service.dart';
 import 'package:fam_intento1/pantallas/Inicio.dart';
+import 'package:fam_intento1/pantallas/public_main_screen.dart';
 import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
 import 'package:fam_intento1/widgets/gradient_scaffold.dart';
 
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => isAdmin ? const DashboardScreen() : const PantallaInicio(),
+            builder: (context) => isAdmin ? const DashboardScreen() : const PublicMainScreen(),
           ),
         );
       }
@@ -128,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => isAdmin ? const DashboardScreen() : const PantallaInicio(),
+            builder: (context) => isAdmin ? const DashboardScreen() : const PublicMainScreen(),
           ),
         );
       }

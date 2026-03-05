@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/services/auth_service.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/pantallas/info_screen.dart';
 import 'package:fam_intento1/pantallas/contacto_screen.dart';
@@ -57,44 +59,72 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
   }
 
   Future<void> _loadMiembros() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
+    // 1. Cargar datos locales inmediatamente
     try {
-      final  data = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
-      setState(() {
-        _isLoading = false;
-        final List<dynamic> miembrosList = List<dynamic>.from(data);
-        miembrosList.sort((a, b) {
-          final tipoA = _detectarTipoAsociacion(a);
-          final tipoB = _detectarTipoAsociacion(b);
-          String keyA;
-          String keyB;
-          if (tipoA == 'AMDES') {
-            keyA = (a['municipio'] ?? '').toString().toUpperCase();
-          } else {
-            keyA = (a['alias'] ?? '').toString().toUpperCase();
-          }
-          if (tipoB == 'AMDES') {
-            keyB = (b['municipio'] ?? '').toString().toUpperCase();
-          } else {
-            keyB = (b['alias'] ?? '').toString().toUpperCase();
-          }
-          return keyA.compareTo(keyB);
-        });
-        _miembros = miembrosList;
-        _filteredMiembros = List.from(_miembros);
-      });
+      final localData = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
+      if (localData.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+            _procesarListaMiembros(localData);
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() { _isLoading = true; _errorMessage = null; });
+        }
+      }
     } catch (e) {
-      if (mounted) {
+      print("Warning: Error leyendo SQLite \$e");
+    }
+
+    // 2. Intentar actualizar en background desde la API
+    try {
+      final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
+      if (res['success'] == true) {
+        final List<dynamic> data = res['data'];
+        
+        // Sanitizar y guardar en SQLite
+        List<Map<String, dynamic>> miemClean = data.map((item) {
+          Map<String, dynamic> map = Map<String, dynamic>.from(item);
+          map.removeWhere((key, value) => value is Map || value is List);
+          return map;
+        }).toList();
+
+        await DatabaseHelper.instance.syncMinistros(miemClean);
+        
+        // Actualizamos UI solo si seguimos en pantalla
+        if (mounted) {
+          setState(() {
+            _procesarListaMiembros(data);
+            _filter();
+            _isLoading = false;
+            _errorMessage = null;
+          });
+        }
+      }
+    } catch (apiError) {
+      print("Background Fetch Error: \$apiError.");
+      if (mounted && _miembros.isEmpty) {
         setState(() {
           _isLoading = false;
-          _errorMessage = "Error cargando datos locales: $e";
+          _errorMessage = "No hay miembros disponibles y no hay conexión a internet.";
         });
       }
     }
+  }
+
+  void _procesarListaMiembros(List<dynamic> data) {
+    final List<dynamic> miembrosList = List<dynamic>.from(data);
+    miembrosList.sort((a, b) {
+      final tipoA = _detectarTipoAsociacion(a);
+      final tipoB = _detectarTipoAsociacion(b);
+      String keyA = tipoA == 'AMDES' ? (a['municipio'] ?? '').toString().toUpperCase() : (a['alias'] ?? '').toString().toUpperCase();
+      String keyB = tipoB == 'AMDES' ? (b['municipio'] ?? '').toString().toUpperCase() : (b['alias'] ?? '').toString().toUpperCase();
+      return keyA.compareTo(keyB);
+    });
+    _miembros = miembrosList;
+    _filteredMiembros = List.from(_miembros);
   }
 
   // --- UI ---
@@ -115,9 +145,14 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [appColores.headerTealStart, appColores.headerTealEnd],
+                    colors: [
+                      appColores.assocGradientTop,     // Azul oscuro
+                      appColores.assocGradientMiddle,  // Azul medio
+                      appColores.assocGradientBottom,  // Gris claro abajo
+                    ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
+                    stops: const [0.0, 0.5, 1.0],
                   ),
                 ),
                 child: SafeArea(
@@ -217,47 +252,12 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            )
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 0, // Podría ser null o manejar estado global, pero por ahora en flow es parte de 'Inicio'
-          onTap: (index) {
-             if (index == 0) {
-                // Ir a Home (Departamentos)
-                // Usamos popUntil o pushAndRemoveUntil para ir al root
-                Navigator.of(context).popUntil((route) => route.isFirst);
-             } else if (index == 1) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const InfoScreen()));
-             } else if (index == 2) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactoScreen()));
-             }
-          },
-          selectedItemColor: appColores.primaryGreen,
-          unselectedItemColor: Colors.grey.shade400,
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Inicio'),
-            BottomNavigationBarItem(icon: Icon(Icons.info_outline_rounded), label: 'Info'),
-            BottomNavigationBarItem(icon: Icon(Icons.phone_outlined), label: 'Contacto'),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _buildList() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: appColores.primaryGreen));
+      return const Center(child: CircularProgressIndicator(color: appColores.assocGradientMiddle));
     }
     if (_errorMessage != null) {
       return Center(child: Text(_errorMessage!, style: const TextStyle(color: Colors.red)));
@@ -336,13 +336,13 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF00796B), Color(0xFF26A69A)], // Teal Gradient
+                        colors: [appColores.assocGradientMiddle, appColores.blueGradientBottom], 
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.teal.withOpacity(0.2),
+                          color: appColores.assocGradientMiddle.withOpacity(0.2),
                           blurRadius: 8,
                           offset: const Offset(0, 3)
                         )
@@ -350,13 +350,14 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                     ),
                     child: ClipOval(
                       child: networkPhoto != null
-                          ? Image.network(
-                              networkPhoto, 
+                          ? CachedNetworkImage(
+                              imageUrl: networkPhoto, 
                               fit: BoxFit.cover, 
-                              errorBuilder: (_,__,___) => _buildInitial(mainTitle),
-                              loadingBuilder: (_, child, prog) => prog == null 
-                                ? child 
-                                : const Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                              errorWidget: (context, url, error) => _buildInitial(mainTitle),
+                              placeholder: (context, url) => const Padding(
+                                padding: EdgeInsets.all(16), 
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                              ),
                             )
                           : _buildInitial(mainTitle),
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/services/api_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageHelper {
   
@@ -15,12 +16,12 @@ class ImageHelper {
     // 1. Try API Network Image
     if (apiPath != null && apiPath.isNotEmpty) {
       if (apiPath.startsWith('http')) {
-        return NetworkImage(apiPath);
+        return CachedNetworkImageProvider(apiPath);
       }
       String cleanPath = apiPath;
       if (!cleanPath.startsWith('/')) cleanPath = '/$cleanPath';
       final url = "${ApiService.baseUrl.replaceAll('/api', '')}$cleanPath";
-      return NetworkImage(url);
+      return CachedNetworkImageProvider(url);
     }
 
     // 2. Try Asset Image based on Type and params

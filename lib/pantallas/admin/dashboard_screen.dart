@@ -4,10 +4,10 @@ import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/services/sync_service.dart'; // Import para sync real si es necesario
 import 'package:fam_intento1/widgets/admin_drawer.dart';
-import 'package:fam_intento1/pantallas/admin/gestion_departamentos_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_asociaciones_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_miembros_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_usuarios_screen.dart';
+import 'package:fam_intento1/pantallas/admin/gestion_personal_screen.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart'; 
 import 'package:fam_intento1/pantallas/login.dart';
 
@@ -25,9 +25,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _userRole = "ADMIN";
   
   // Contadores
-  int _countDeptos = 0;
   int _countAsoc = 0;
   int _countMiembros = 0;
+  int _countPersonal = 0;
   int _countUsers = 0;
   bool _isLoading = true;
   bool _isSyncing = false;
@@ -44,29 +44,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
     
     try {
       final futures = await Future.wait([
-        ApiService.getDepartamentos(),
         ApiService.getAllAsociaciones(),
         ApiService.getAllMiembros(),
+        ApiService.getAllPersonal(),
         ApiService.getAllUsuarios(),
       ]);
 
-      int cDeptos = 0;
       int cAsoc = 0;
       int cMiembros = 0;
+      int cPersonal = 0;
       int cUsers = 0;
 
-      if (futures[0]['success']) cDeptos = (futures[0]['data'] as List).length;
-      if (futures[1]['success']) cAsoc = (futures[1]['data'] as List).length;
-      if (futures[2]['success']) cMiembros = (futures[2]['data'] as List).length;
+      if (futures[0]['success']) cAsoc = (futures[0]['data'] as List).length;
+      if (futures[1]['success']) cMiembros = (futures[1]['data'] as List).length;
+      if (futures[2]['success']) cPersonal = (futures[2]['data'] as List).length;
       if (futures[3]['success']) cUsers = (futures[3]['data'] as List).length;
 
       if (mounted) {
         setState(() {
           _userName = name ?? "Admin FAM";
           _userRole = role?.toUpperCase() ?? "ADMIN";
-          _countDeptos = cDeptos;
           _countAsoc = cAsoc;
           _countMiembros = cMiembros;
+          _countPersonal = cPersonal;
           _countUsers = cUsers;
           _isLoading = false;
         });
@@ -185,8 +185,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(20),
                                     decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Color(0xFF0277BD), Color(0xFF00C853)], // Blue to Green Gradient
+                                      gradient: LinearGradient(
+                                        colors: [appColores.dashTealStart, Colors.white.withOpacity(0.85)], // Blue to Light White Gradient
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ),
@@ -267,14 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   childAspectRatio: 0.9, // Taller cards
                                   children: [
-                                    _StatCard(
-                                      title: "Departamentos",
-                                      count: _countDeptos.toString(),
-                                      icon: Icons.business, // Building icon-ish
-                                      iconColor: appColores.iconGreen,
-                                      bgColor: appColores.iconBgGreen,
-                                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionDepartamentosScreen())),
-                                    ),
+
                                     _StatCard(
                                       title: "Asociaciones",
                                       count: _countAsoc.toString(),
@@ -290,6 +283,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       iconColor: appColores.iconGreen,
                                       bgColor: appColores.iconBgGreen,
                                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionMiembrosScreen())),
+                                    ),
+                                    _StatCard(
+                                      title: "Personal",
+                                      count: _countPersonal.toString(),
+                                      icon: Icons.badge_outlined,
+                                      iconColor: appColores.primaryBlue,
+                                      bgColor: Colors.blue.withOpacity(0.1),
+                                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionPersonalScreen())),
                                     ),
                                     _StatCard(
                                       title: "Usuarios",
