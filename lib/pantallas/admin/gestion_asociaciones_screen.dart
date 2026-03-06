@@ -583,6 +583,7 @@ class _AsociacionFormState extends State<AsociacionForm> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // FIXED HEADER
         Row(
@@ -616,7 +617,8 @@ class _AsociacionFormState extends State<AsociacionForm> {
         const SizedBox(height: 20),
         
         // SCROLLABLE CONTENT
-        Expanded(
+        Flexible(
+          fit: FlexFit.loose,
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,

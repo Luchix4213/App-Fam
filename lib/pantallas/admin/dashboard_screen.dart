@@ -8,6 +8,7 @@ import 'package:fam_intento1/pantallas/admin/gestion_asociaciones_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_miembros_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_usuarios_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_personal_screen.dart';
+import 'package:fam_intento1/pantallas/admin/gestion_noticias_screen.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart'; 
 import 'package:fam_intento1/pantallas/login.dart';
 
@@ -29,6 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _countMiembros = 0;
   int _countPersonal = 0;
   int _countUsers = 0;
+  int _countNoticias = 0;
   bool _isLoading = true;
   bool _isSyncing = false;
 
@@ -43,22 +45,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final role = await AuthService.getUserRole();
     
     try {
+      final isFamOrOtherAdmin = role?.toUpperCase() == 'FAM'; // or specifically check is ADMIN
+
       final futures = await Future.wait([
         ApiService.getAllAsociaciones(),
         ApiService.getAllMiembros(),
         ApiService.getAllPersonal(),
-        ApiService.getAllUsuarios(),
+        (role?.toUpperCase() == 'ADMIN') 
+            ? ApiService.getAllUsuarios() 
+            : Future.value({'success': true, 'data': []}),
+        ApiService.getAllNoticias(),
       ]);
 
       int cAsoc = 0;
       int cMiembros = 0;
       int cPersonal = 0;
       int cUsers = 0;
+      int cNoticias = 0;
 
       if (futures[0]['success']) cAsoc = (futures[0]['data'] as List).length;
       if (futures[1]['success']) cMiembros = (futures[1]['data'] as List).length;
       if (futures[2]['success']) cPersonal = (futures[2]['data'] as List).length;
       if (futures[3]['success']) cUsers = (futures[3]['data'] as List).length;
+      if (futures[4]['success']) cNoticias = (futures[4]['data'] as List).length;
 
       if (mounted) {
         setState(() {
@@ -68,6 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _countMiembros = cMiembros;
           _countPersonal = cPersonal;
           _countUsers = cUsers;
+          _countNoticias = cNoticias;
           _isLoading = false;
         });
       }
@@ -211,29 +221,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           child: const Icon(Icons.security, size: 40, color: Colors.white),
                                         ),
                                         const SizedBox(width: 15),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Dashboard FAM",
-                                              style: TextStyle(
-                                                color: Colors.white.withOpacity(0.9),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Dashboard FAM",
+                                                style: TextStyle(
+                                                  color: Colors.white.withOpacity(0.9),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              "Hola, $_userName",
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                "Hola, $_userName",
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              const SizedBox(height: 8),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: Colors.white.withOpacity(0.2),
                                                 borderRadius: BorderRadius.circular(8)
@@ -244,6 +257,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               ),
                                             )
                                           ],
+                                        ),
                                         )
                                       ],
                                     ),
@@ -277,6 +291,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionAsociacionesScreen())),
                                     ),
                                     _StatCard(
+                                      title: "Noticias",
+                                      count: _countNoticias.toString(),
+                                      icon: Icons.newspaper,
+                                      iconColor: appColores.iconGreen,
+                                      bgColor: appColores.iconBgGreen,
+                                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionNoticiasScreen())),
+                                    ),
+                                    _StatCard(
                                       title: "Miembros",
                                       count: _countMiembros.toString(),
                                       icon: Icons.people_outline,
@@ -292,71 +314,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       bgColor: Colors.blue.withOpacity(0.1),
                                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionPersonalScreen())),
                                     ),
-                                    _StatCard(
-                                      title: "Usuarios",
-                                      count: _countUsers.toString(),
-                                      icon: Icons.person_outline,
-                                      iconColor: appColores.iconOrange,
-                                      bgColor: appColores.iconBgOrange,
-                                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionUsuariosScreen())),
-                                    ), // Users only for admin technically, but let's show anyway or condition it
+                                    if (_userRole == 'ADMIN')
+                                      _StatCard(
+                                        title: "Usuarios",
+                                        count: _countUsers.toString(),
+                                        icon: Icons.person_outline,
+                                        iconColor: appColores.iconOrange,
+                                        bgColor: appColores.iconBgOrange,
+                                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GestionUsuariosScreen())),
+                                      ),
                                   ],
-                                 ),
-                                 
-                                 const SizedBox(height: 25),
-                                 
-                                 // 4. Sync Button Prominent
-                                 InkWell(
-                                   onTap: _isSyncing ? null : _handleSync,
-                                   borderRadius: BorderRadius.circular(20),
-                                   child: Container(
-                                     width: double.infinity,
-                                     padding: const EdgeInsets.symmetric(vertical: 20),
-                                     decoration: BoxDecoration(
-                                       gradient: const LinearGradient(
-                                          colors: [Color(0xFF00ADEF), Color(0xFF00796B)], // Blue to Teal
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight
-                                       ),
-                                       borderRadius: BorderRadius.circular(20),
-                                       boxShadow: [
-                                         BoxShadow(color: const Color(0xFF00ADEF).withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))
-                                       ]
-                                     ),
-                                     child: _isSyncing 
-                                        ? const Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)))
-                                        : Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: const [
-                                              Icon(Icons.sync, color: Colors.white, size: 24),
-                                              SizedBox(width: 10),
-                                              Text("Sincronizar Datos", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                                            ],
-                                          ),
-                                   ),
-                                 ),
-                                 
-                                 const SizedBox(height: 25),
-                                 
-                                 // 5. System Summary (Cleaner)
-                                 Container(
-                                   width: double.infinity,
-                                   padding: const EdgeInsets.all(20),
-                                   decoration: BoxDecoration(
-                                     color: Colors.white,
-                                     borderRadius: BorderRadius.circular(20),
-                                     boxShadow: [
-                                       BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
-                                     ]
-                                   ),
-                                   child: Column(
-                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                     children: const [
-                                       Text("Resumen del Sistema", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF263238))),
-                                       SizedBox(height: 10),
-                                       Text("El sistema se encuentra actualizado.", style: TextStyle(color: Colors.grey, fontSize: 13)),
-                                     ],
-                                   ),
                                  ),
                                  
                                  const SizedBox(height: 30),

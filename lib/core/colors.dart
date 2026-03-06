@@ -6,6 +6,10 @@ class appColores{
   static const Color primaryBlue = Color(0xFF00ADEF); // Cyan/Blue vibrant
   static const Color primaryGreen = Color(0xFF25D366); // Green prominent (WhatsApp-like or FAM Green)
   static const Color primaryGreenDark = Color(0xFF1B5E20); // Darker green for gradients
+
+  static const Color nvBlue = Color(0xFF0A1F44); // Cyan/Blue vibrant
+  static const Color nvinactivo = Color(0xFF8A9BB5); // Cyan/Blue vibrant
+  static const Color nvactivo = Color(0xFF007934); // Cyan/Blue vibrant
   
   // Gradients
   static const Color gradientTop = Color(0xFFE0F7FA); // Light Cyan

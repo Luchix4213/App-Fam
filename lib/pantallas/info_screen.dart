@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/services/api_service.dart';
-import 'package:fam_intento1/widgets/gradient_scaffold.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -16,7 +13,6 @@ class InfoScreen extends StatefulWidget {
 class _InfoScreenState extends State<InfoScreen> {
   List<dynamic> _personal = [];
   bool _isLoading = true;
-  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -67,32 +63,26 @@ class _InfoScreenState extends State<InfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
+      backgroundColor: const Color(0xFF135685),
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 30),
             
-            // --- HEADER: DIRECTORIO MUNICIPAL ---
+            // --- HEADER: DIRECTORIO ---
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.people_alt_outlined, color: Colors.white, size: 20),
-                ),
+                const Icon(Icons.people_alt_outlined, color: Colors.white, size: 28),
                 const SizedBox(width: 10),
                 const Text(
                   "DIRECTORIO",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 3.0,
+                    letterSpacing: 2.0,
                   ),
                 ),
               ],
@@ -101,78 +91,33 @@ class _InfoScreenState extends State<InfoScreen> {
             Text(
               "FAM BOLIVIA",
               style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
-                fontSize: 12,
-                letterSpacing: 4.0,
-                fontWeight: FontWeight.w600,
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 13,
+                letterSpacing: 3.0,
+                fontWeight: FontWeight.w500,
               ),
             ),
             
             const SizedBox(height: 30),
 
-            // --- CAROUSEL MAIN AREA ---
+            // --- LIST MAIN AREA ---
             Expanded(
               child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: Colors.white))
                 : _personal.isEmpty
                     ? const Center(child: Text("No hay información de personal disponible.", style: TextStyle(color: Colors.white70)))
-                    : CarouselSlider.builder(
-                        itemCount: _personal.length,
-                        options: CarouselOptions(
-                          aspectRatio: 0.65, // Responsive instead of fixed height
-                          enlargeCenterPage: true,
-                          autoPlay: false, // Desactivado para interactuar con calma
-                          enableInfiniteScroll: _personal.length > 1,
-                          viewportFraction: 0.82,
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              _currentIndex = index;
-                            });
-                          },
-                        ),
-                        itemBuilder: (context, index, realIdx) {
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        itemCount: _personal.length + 1, // +1 para la tarjeta de Vision y Mision
+                        itemBuilder: (context, index) {
+                          if (index == _personal.length) {
+                             return _buildVisionMissionCard();
+                          }
                           final p = _personal[index];
                           return _buildPersonalCard(p);
                         },
                       ),
             ),
-
-            const SizedBox(height: 15),
-
-            // --- PAGINATION INDICATORS ---
-            if (!_isLoading && _personal.isNotEmpty)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.chevron_left, color: Colors.white54, size: 28),
-                  const SizedBox(width: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _personal.asMap().entries.map((entry) {
-                      return Container(
-                        width: _currentIndex == entry.key ? 22.0 : 8.0,
-                        height: 8.0,
-                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: Colors.white.withOpacity(_currentIndex == entry.key ? 0.9 : 0.2)
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(width: 10),
-                  const Icon(Icons.chevron_right, color: Colors.white54, size: 28),
-                ],
-              ),
-              
-            if (!_isLoading && _personal.isNotEmpty)
-               Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 15),
-                  child: Text(
-                     "${_currentIndex + 1} / ${_personal.length}",
-                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, fontSize: 12)
-                  )
-               ),
           ],
         ),
       ),
@@ -188,158 +133,148 @@ class _InfoScreenState extends State<InfoScreen> {
     final String correo = (p['correo_electronico'] != null && p['correo_electronico'].toString().trim().isNotEmpty) ? p['correo_electronico'].toString().trim() : "No registrado";
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 25),
+      // La tarjeta tiene borde redondeado en todos sus lados. 
+      // El fondo de la tarjeta es blanco.
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF166CC8), Color(0xFF144A8C)], // Gradiente azul brillante estilo tarjeta
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          )
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Stack(
-          children: [
-            // Elementos decorativos de fondo (puntos arriba a la izquierda)
-            Positioned(
-              top: 15,
-              left: 15,
-              child: Icon(Icons.apps, color: Colors.white.withOpacity(0.1), size: 35),
-            ),
-            
-            Column(
-              children: [
-                const SizedBox(height: 20),
-                
-                // Minitarjeta escudo FAM
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-                  ),
-                  child: const Icon(Icons.security, color: Colors.white, size: 14),
+      child: Column(
+        children: [
+          // Mitad superior azul oscuro (#135685)
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                height: 100,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF054D9E),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  "FAM - BOLIVIA",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
+                child: Container(
+                  // Para dar el efecto de "borde" del container superior como en la imagen,
+                  // que a pesar de ser del mismo color que el fondo, se distingue. Se puede agregar un margen y borderRadius mas pequeño o un borde blanco.
+                  margin: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF135685),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(23)),
                   ),
                 ),
-                
-                const SizedBox(height: 15),
-                
-                // --- FOTO CÍRCULOS CONCÉNTRICOS ---
-                Container(
-                  width: 120, // Reducido de 140
-                  height: 120,
+              ),
+              // Borde blanco interior de la parte superior
+              Positioned.fill(
+                child: Container(
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.2), width: 2), // Anillo exterior
+                    border: Border.all(color: Colors.white, width: 1.5),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
                   ),
-                  child: Center(
-                    child: Container(
-                      width: 100, // Reducido de 115
-                      height: 100,
+                )
+              ),
+              // Foto de perfil sobre la linea
+              Positioned(
+                bottom: -45, // Mitad de la foto
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 90,
+                      height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withOpacity(0.5), width: 3), // Anillo medio
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFFFFFFF), width: 1),
                       ),
-                      child: Center(
-                        child: ClipOval(
-                          child: foto.isNotEmpty 
-                            ? CachedNetworkImage(
-                                imageUrl: foto, 
-                                fit: BoxFit.cover, 
-                                width: 90, 
-                                height: 90,
-                                placeholder: (context, url) => Container(color: Colors.white12, child: const CircularProgressIndicator(color: Colors.white)),
-                                errorWidget: (context, url, err) => Container(color: Colors.white24, child: const Icon(Icons.person, size: 45, color: Colors.white))
-                              )
-                            : Container(
-                                width: 90, 
-                                height: 90, 
-                                color: Colors.white24, 
-                                child: const Icon(Icons.person, size: 45, color: Colors.white)
-                              ),
-                        )
-                      )
-                    )
-                  )
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // --- INFORMACIÓN NOMBRE / CARGO ---
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    nombre,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      child: ClipOval(
+                        child: foto.isNotEmpty 
+                          ? CachedNetworkImage(
+                              imageUrl: foto, 
+                              fit: BoxFit.cover, 
+                              placeholder: (context, url) => const CircularProgressIndicator(color: Color(0xFF6EC6D8)),
+                              errorWidget: (context, url, err) => const Icon(Icons.person, size: 45, color: Colors.grey)
+                            )
+                          : const Icon(Icons.person, size: 45, color: Colors.grey),
+                      ),
                     ),
-                  ),
+                    // Icono redondito celestial
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6EC6D8),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFF135685), width: 1.5),
+                        ),
+                        child: const Icon(Icons.people_alt, color: Colors.white, size: 14),
+                      ),
+                    )
+                  ],
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  cargo,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                  ),
-                ),
-                
-                const Spacer(),
-                
-                // --- PANELES DE CONTACTO ---
-                _buildGlassPanel(Icons.phone_outlined, "CELULAR", celular),
-                _buildGlassPanel(Icons.email_outlined, "CORREO", correo),
-                
-                const SizedBox(height: 20),
-              ],
-            ),
-          ],
-        ),
-      ),
+              )
+            ],
+          ),
+          
+          // Mitad blanca abajo
+          const SizedBox(height: 55), // Espacio para la foto
+          Padding(
+             padding: const EdgeInsets.symmetric(horizontal: 10),
+             child: Text(
+               nombre,
+               textAlign: TextAlign.center,
+               style: const TextStyle(
+                 color: Color(0xFF135685),
+                 fontSize: 20,
+                 fontWeight: FontWeight.bold,
+               ),
+             ),
+          ),
+          const SizedBox(height: 5),
+          Padding(
+             padding: const EdgeInsets.symmetric(horizontal: 10),
+             child: Text(
+               cargo,
+               textAlign: TextAlign.center,
+               style: const TextStyle(
+                 color: Color(0xFF6EC6D8),
+                 fontSize: 14,
+               ),
+             ),
+          ),
+          
+          const SizedBox(height: 10),
+          
+          // Paneles de celular y correo
+          _buildContactBox(Icons.phone, "CELULAR", celular),
+          _buildContactBox(Icons.email_outlined, "CORREO", correo),
+          
+          const SizedBox(height: 25),
+        ],
+      )
     );
   }
 
-  // --- COMPONENTE: PANEL DE CRISTAL PARA REDES ---
-  Widget _buildGlassPanel(IconData icon, String label, String value) {
+  // --- COMPONENTE: CAJA DE CONTACTO ---
+  Widget _buildContactBox(IconData icon, String label, String value) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+         color: const Color(0xFFF2F7F9), // Celeste agrisado como en el mockup
+         borderRadius: BorderRadius.circular(15),
+         border: Border.all(color: const Color(0xFF6EC6D8).withOpacity(0.3)), // Un celeste sutil
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10)
+              color: const Color(0xFF135685), // Azul oscuro
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.white70, size: 20),
+            child: Icon(icon, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -347,20 +282,140 @@ class _InfoScreenState extends State<InfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label, 
-                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)
+                  label,
+                  style: const TextStyle(
+                    color: Color(0xFF6EC6D8), // Celeste cyan
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2
+                  ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Text(
-                  value, 
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)
-                ),
+                  value,
+                  style: const TextStyle(
+                    color: Color(0xFF135685),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
               ],
             ),
           )
         ],
-      )
+      ),
+    );
+  }
+
+  // --- COMPONENTE: TARJETA DE VISIÓN Y MISIÓN ---
+  Widget _buildVisionMissionCard() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 25, top: 10),
+      // Borde redondeado y fondo blanco
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(
+          color: Colors.white,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- Cabecera Azul Oscuro ---
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: const BoxDecoration(
+              color: Color(0xFF135685),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                const Text(
+                  "VISIÓN Y MISIÓN",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  "FAM BOLIVIA",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 12,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // --- Sección Misión ---
+          Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Misión:",
+                  style: TextStyle(
+                    color: Color(0xFF135685),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "Representar a los Gobiernos Autónomos Municipales precautelando el pleno ejercicio de su autonomía, con capacidad técnica, administrativa y con protagonismo en el Desarrollo del Estado Plurinacional de Bolivia.",
+                  style: TextStyle(
+                    color: Color(0xFF135685),
+                    fontSize: 14.5,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+              ],
+            ),
+          ),
+          
+          // Línea divisoria suave
+          Divider(color: Colors.grey.withOpacity(0.2), indent: 25, endIndent: 25, height: 1),
+          
+          // --- Sección Visión ---
+          Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Visión:",
+                  style: TextStyle(
+                    color: Color(0xFF135685),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "La FAM-Bolivia es una entidad inclusiva, con institucionalidad sustentada por Ley, de administración descentralizada, con sostenibilidad técnica-financiera, modelo y líder del Asociativismo de Gobiernos Municipales en Latinoamérica.",
+                  style: TextStyle(
+                    color: Color(0xFF135685),
+                    fontSize: 14.5,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+

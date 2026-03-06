@@ -25,39 +25,29 @@ class ContactoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Info hardcoded for exactly what is expected from the mockup
     const direccion = "Av. 14 de Septiembre N° 6154 (Obrajes),\nentre calles 15 y 16";
-    const telefonoStr1 = "(591) (2) 2789157";
-    const telefonoStr2 = "(2) 2789114 - (2) 2789170";
+    const telefonoStr1 = "";
+    const telefonoStr2 = "(2) 2789114";
     const fax = "Fax: (591) 2 2782106";
     const correo = "contacto@fam.org.bo";
-    const locationMapUrl = "https://maps.app.goo.gl/GJ8UzbeahbfDxgoN8";
+    const locationMapUrl = "https://maps.app.goo.gl/CWTLdhaCnqE8Lobc9";
 
     return Scaffold(
-      backgroundColor: appColores.assocGradientMiddle, // Azul medio de fondo
+      backgroundColor: Colors.white, // Fondo blanco entero
       body: Column(
         children: [
           // Logo Section (Top Half)
+          const SizedBox(height: 30),
           Expanded(
             flex: 3,
             child: Center(
-              child: Container(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    )
-                  ],
-                ),
                 child: Image.asset(
                   "assets/images/famlogo2.png",
-                  width: 150,
-                  height: 150,
+                  width: 220, // Foto un poco mas grande
+                  height: 220,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.business, size: 100, color: appColores.dashTealStart),
+                  errorBuilder: (_, __, ___) => const Icon(Icons.business, size: 120, color: appColores.dashTealStart),
                 ),
               ),
             ),
@@ -92,7 +82,7 @@ class ContactoScreen extends StatelessWidget {
                           
                           const SizedBox(height: 15),
                           _buildSectionTitle("Teléfonos"),
-                          _buildInfoText(telefonoStr1),
+                         // _buildInfoText(telefonoStr1),
                           _buildInfoText(telefonoStr2),
                           _buildInfoText(fax),
                           

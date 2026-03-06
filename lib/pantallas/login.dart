@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Obtener rol para redirección
       final role = await AuthService.getUserRole();
-      final isAdmin = role != null && (role.toLowerCase() == 'admin' || role.toLowerCase() == 'superadmin');
+      final isAdmin = role != null && (role.toLowerCase() == 'admin' || role.toLowerCase() == 'fam');
 
       if (mounted) {
         Navigator.pushReplacement(

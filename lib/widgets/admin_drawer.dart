@@ -7,6 +7,7 @@ import 'package:fam_intento1/pantallas/admin/gestion_asociaciones_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_miembros_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_usuarios_screen.dart';
 import 'package:fam_intento1/pantallas/admin/gestion_personal_screen.dart';
+import 'package:fam_intento1/pantallas/admin/gestion_noticias_screen.dart';
 import 'package:fam_intento1/pantallas/Inicio.dart';
 
 class AdminDrawer extends StatelessWidget {
@@ -106,6 +107,13 @@ class AdminDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               children: [
+                _DrawerItem(
+                  icon: Icons.newspaper,
+                  text: "Gestión de Noticias",
+                  isActive: context.widget.toString() == 'GestionNoticiasScreen' || currentRoute == 'Noticias',
+                  onTap: () => _navigate(context, const GestionNoticiasScreen()),
+                ),
+                const Divider(),
                 _DrawerItem(
                   icon: Icons.dashboard_outlined,
                   text: "Dashboard",

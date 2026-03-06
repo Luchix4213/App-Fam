@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.routes.js";
 import asociacionRoutes from "./routes/asociacion.routes.js";
 import miembroRoutes from "./routes/miembro.routes.js";
 import personalRoutes from "./routes/personal.routes.js";
+import noticiaRoutes from "./routes/noticia.routes.js";
 import sequelize from "./config/db.js";
 import User from "./models/user.model.js";
 import "./models/index.js";
@@ -18,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/asociaciones", asociacionRoutes);
 app.use("/api/miembros", miembroRoutes);
 app.use("/api/personal", personalRoutes);
+app.use("/api/noticias", noticiaRoutes);
 await sequelize.sync({ alter: true }); // actualiza tablas si cambian
 
 // Middleware de manejo de errores global

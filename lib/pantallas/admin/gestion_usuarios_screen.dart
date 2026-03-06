@@ -23,6 +23,9 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
   List<dynamic> _filteredUsuarios = [];
   final TextEditingController _searchCtrl = TextEditingController();
 
+  String _filterRole = 'Todos';
+  String _filterEstado = 'Todos';
+
   @override
   void initState() {
     super.initState();
@@ -40,10 +43,18 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
     final query = _searchCtrl.text.toLowerCase();
     setState(() {
       _filteredUsuarios = _usuarios.where((u) {
-        final nombre = (u['nombre'] ?? '').toLowerCase();
-        final email = (u['email'] ?? '').toLowerCase();
-        final role = (u['role'] ?? '').toLowerCase();
-        return nombre.contains(query) || email.contains(query) || role.contains(query);
+        final nombre = (u['name'] ?? '').toString().toLowerCase();
+        final email = (u['email'] ?? '').toString().toLowerCase();
+        final role = (u['role'] ?? 'USER').toString().toUpperCase();
+        final estado = (u['estado'] ?? 'activo').toString().toLowerCase();
+
+        bool matchSearch = nombre.contains(query) || email.contains(query);
+        bool matchRole = _filterRole == 'Todos' || role == _filterRole;
+        bool matchEstado = _filterEstado == 'Todos' || 
+                           (_filterEstado == 'Activo' && estado != 'inactivo') ||
+                           (_filterEstado == 'Inactivo' && estado == 'inactivo');
+
+        return matchSearch && matchRole && matchEstado;
       }).toList();
     });
   }
@@ -128,7 +139,81 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
   }
 
   Future<void> _delete(int id) async {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Eliminar usuario no implementado")));
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Confirmar Baja", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text("¿Estás seguro de inhabilitar el acceso a este usuario?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancelar", style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFEF5350)),
+            child: const Text("Dar de Baja", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      )
+    );
+
+    if (confirm == true) {
+      setState(() => _isLoading = true);
+      try {
+        final res = await ApiService.updateUsuario(id, {'estado': 'inactivo'});
+        if (res['success'] == true || res['success'] == 'true') {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Usuario dado de baja exitosamente")));
+          _loadData();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${res['message']}")));
+        }
+      } catch (e) {
+        if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      } finally {
+        if(mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _reactivate(int id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Confirmar Reactivación", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text("¿Deseas reactivar el acceso a este usuario?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancelar", style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text("Reactivar", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      )
+    );
+
+    if (confirm == true) {
+      setState(() => _isLoading = true);
+      try {
+        final res = await ApiService.updateUsuario(id, {'estado': 'activo'});
+        if (res['success'] == true || res['success'] == 'true') {
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Usuario reactivado existosamente")));
+           _loadData();
+        } else {
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${res['message']}")));
+        }
+      } catch (e) {
+        if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      } finally {
+        if(mounted) setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -271,6 +356,53 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
                  ),
                ),
 
+               const SizedBox(height: 15),
+
+               // FILTERS
+               Padding(
+                 padding: const EdgeInsets.symmetric(horizontal: 20),
+                 child: Row(
+                   children: [
+                     Expanded(
+                       child: Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 10),
+                         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.grey.shade100)),
+                         child: DropdownButtonHideUnderline(
+                           child: DropdownButton<String>(
+                             isExpanded: true,
+                             value: _filterRole,
+                             items: ['Todos', 'ADMIN', 'FAM', 'USUARIO'].map((e) => DropdownMenuItem(value: e, child: Text(e == 'Todos' ? 'Rol: Todos' : 'Rol: $e', style: const TextStyle(fontSize: 13, color: Colors.black87)))).toList(),
+                             onChanged: (v) {
+                               setState(() => _filterRole = v!);
+                               _filter();
+                             },
+                             icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                           ),
+                         ),
+                       ),
+                     ),
+                     const SizedBox(width: 10),
+                     Expanded(
+                       child: Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 10),
+                         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.grey.shade100)),
+                         child: DropdownButtonHideUnderline(
+                           child: DropdownButton<String>(
+                             isExpanded: true,
+                             value: _filterEstado,
+                             items: ['Todos', 'Activo', 'Inactivo'].map((e) => DropdownMenuItem(value: e, child: Text(e == 'Todos' ? 'Estado: Todos' : 'Estado: $e', style: const TextStyle(fontSize: 13, color: Colors.black87)))).toList(),
+                             onChanged: (v) {
+                               setState(() => _filterEstado = v!);
+                               _filter();
+                             },
+                             icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                           ),
+                         ),
+                       ),
+                     )
+                   ],
+                 ),
+               ),
                const SizedBox(height: 20),
 
                // LISTA
@@ -300,9 +432,12 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
     if (role == 'ADMIN') roleColor = Colors.red;
     if (role == 'FAM') roleColor = Colors.blue;
 
+    String estado = (u['estado'] ?? 'activo').toString().toLowerCase();
+    bool isInactive = estado == 'inactivo';
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isInactive ? Colors.grey.shade100 : Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -310,39 +445,78 @@ class _GestionUsuariosScreenState extends State<GestionUsuariosScreen> {
             blurRadius: 8,
             offset: const Offset(0, 4)
           )
-        ]
+        ],
+        border: isInactive ? Border.all(color: Colors.red.shade100) : null,
       ),
       child: Material(
         color: Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 25,
-                backgroundColor: appColores.dashTealStart.withOpacity(0.1),
-                child: Text(initial, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: appColores.dashTealStart)),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Opacity(
+            opacity: isInactive ? 0.6 : 1.0,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: appColores.dashTealStart.withOpacity(0.1),
+                  child: Text(initial, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: appColores.dashTealStart)),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(nombre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 2),
+                      Text(email, style: const TextStyle(color: Colors.grey, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: roleColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6)
+                        ),
+                        child: Text(role.toUpperCase(), style: TextStyle(color: roleColor, fontWeight: FontWeight.bold, fontSize: 10)),
+                      ),
+                      if (isInactive) ...[
+                        const SizedBox(height: 4),
+                        Text("Inactivo / Deshabilitado", style: TextStyle(color: Colors.red.shade700, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ]
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(nombre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text(email, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    IconButton(
+                      onPressed: () => _showForm(usuario: u), 
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      padding: const EdgeInsets.all(6),
+                      constraints: const BoxConstraints(),
+                      splashRadius: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    if (!isInactive)
+                      IconButton(
+                        onPressed: () => _delete(u['id']), 
+                        icon: const Icon(Icons.delete_outline, color: Colors.red),
+                        padding: const EdgeInsets.all(6),
+                        constraints: const BoxConstraints(),
+                        splashRadius: 20,
+                      )
+                    else
+                      IconButton(
+                        onPressed: () => _reactivate(u['id']), 
+                        icon: const Icon(Icons.refresh, color: Colors.green),
+                        padding: const EdgeInsets.all(6),
+                        constraints: const BoxConstraints(),
+                        splashRadius: 20,
+                      )
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: roleColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8)
-                ),
-                child: Text(role, style: TextStyle(color: roleColor, fontWeight: FontWeight.bold, fontSize: 11)),
-              ),
-              IconButton(onPressed: () => _showForm(usuario: u), icon: const Icon(Icons.edit, color: Colors.blue)),
-            ],
+                )
+              ],
+            ),
           ),
          ),
       ),
@@ -367,6 +541,7 @@ class _UsuarioFormState extends State<UsuarioForm> {
   final _passCtrl = TextEditingController();
   String _role = 'USER';
   bool _isSaving = false;
+  bool _obscurePass = true;
 
   @override
   void initState() {
@@ -459,7 +634,7 @@ class _UsuarioFormState extends State<UsuarioForm> {
             _buildTextField(_passCtrl, widget.usuario == null ? "Contraseña *" : "Nueva Contraseña (Opcional)", (v) {
                if (widget.usuario == null && (v == null || v.isEmpty)) return 'Requerido para nuevos usuarios';
                return null;
-            }, obscure: true),
+            }, obscure: _obscurePass, isPassword: true),
             const SizedBox(height: 20),
             
             const Text("Rol", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF37474F))),
@@ -509,7 +684,7 @@ class _UsuarioFormState extends State<UsuarioForm> {
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String label, String? Function(String?)? validator, {bool obscure = false}) {
+  Widget _buildTextField(TextEditingController ctrl, String label, String? Function(String?)? validator, {bool obscure = false, bool isPassword = false}) {
     return TextFormField(
       controller: ctrl,
       obscureText: obscure,
@@ -519,6 +694,10 @@ class _UsuarioFormState extends State<UsuarioForm> {
         hintText: label,
         filled: true,
         fillColor: Colors.grey.shade100,
+        suffixIcon: isPassword ? IconButton(
+          icon: Icon(obscure ? Icons.visibility_off : Icons.visibility, color: Colors.grey),
+          onPressed: () => setState(() => _obscurePass = !_obscurePass),
+        ) : null,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
          floatingLabelStyle: const TextStyle(color: Colors.blue)

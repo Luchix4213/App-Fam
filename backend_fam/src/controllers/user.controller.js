@@ -8,7 +8,7 @@ dotenv.config();
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'role'] // no mandar password
+      attributes: ['id', 'name', 'email', 'role', 'estado'] // no mandar password
     });
     res.json(users);
   } catch (error) {
@@ -20,7 +20,7 @@ export const getUserProfile = async (req, res) => {
   try {
     const userId = req.user.id; // viene del middleware de auth
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'name', 'email', 'role'] // no mandar password
+      attributes: ['id', 'name', 'email', 'role', 'estado'] // no mandar password
     });
 
     if (!user) {
@@ -51,7 +51,7 @@ export const deleteUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, estado } = req.body;
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
@@ -61,7 +61,7 @@ export const createUser = async (req, res) => {
     if (existing) return res.status(400).json({ message: "Email ya registrado" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword, role });
+    const user = await User.create({ name, email, password: hashedPassword, role, estado: estado || 'activo' });
 
     res.status(201).json({ message: "Usuario creado", user });
   } catch (e) {
@@ -71,13 +71,14 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { name, email, role, password } = req.body;
+    const { name, email, role, password, estado } = req.body;
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
     user.name = name || user.name;
     user.email = email || user.email;
     user.role = role || user.role;
+    if (estado) user.estado = estado;
     if (password) {
       user.password = await bcrypt.hash(password, 10);
     }

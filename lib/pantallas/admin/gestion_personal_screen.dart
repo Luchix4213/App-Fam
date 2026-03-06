@@ -149,7 +149,7 @@ class _GestionPersonalScreenState extends State<GestionPersonalScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
       try {
-        final res = await ApiService.deletePersonal(id);
+        final res = await ApiService.updatePersonal(id, {'estado': 'inactivo'}, null);
         if (res['success'] == true || res['success'] == 'true') {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Personal dado de baja")));
           _loadData();
@@ -605,6 +605,7 @@ class _PersonalFormState extends State<PersonalForm> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // FIXED HEADER
         Row(
@@ -638,7 +639,8 @@ class _PersonalFormState extends State<PersonalForm> {
          const SizedBox(height: 20),
 
         // SCROLLABLE BODY
-        Expanded(
+        Flexible(
+          fit: FlexFit.loose,
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,

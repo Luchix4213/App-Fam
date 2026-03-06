@@ -90,6 +90,10 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    if (user.estado === 'inactivo') {
+      return res.status(403).json({ message: "Su cuenta ha sido deshabilitada." });
+    }
+
     // Comparar contraseñas
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -142,6 +146,10 @@ export const googleLogin = async (req, res) => {
 
     // Buscar si el usuario ya existe
     let user = await User.findOne({ where: { email } });
+
+    if (user && user.estado === 'inactivo') {
+      return res.status(403).json({ message: "Su cuenta ha sido deshabilitada." });
+    }
 
     // Si no existe, crearlo con rol de "usuario"
     if (!user) {

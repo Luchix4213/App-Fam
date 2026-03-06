@@ -249,4 +249,35 @@ class ApiService {
       return {'success': false, 'message': 'Error: $e'};
     }
   }
+
+  // --- NOTICIAS ---
+  static Future<Map<String, dynamic>> getAllNoticias({bool activas = false}) async {
+    try {
+      final url = activas ? '$baseUrl/noticias?activa=true' : '$baseUrl/noticias';
+      final response = await _get(url);
+      if (response.statusCode == 200) return {'success': true, 'data': json.decode(response.body)};
+      return {'success': false, 'message': 'Error ${response.statusCode}'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error de conexión: $e'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> createNoticia(Map<String, String> data, String? imagePath) async {
+    return await _uploadImage('$baseUrl/noticias', 'POST', data, imagePath);
+  }
+
+  static Future<Map<String, dynamic>> updateNoticia(int id, Map<String, String> data, String? imagePath) async {
+    return await _uploadImage('$baseUrl/noticias/$id', 'PUT', data, imagePath);
+  }
+
+  static Future<Map<String, dynamic>> deleteNoticia(int id) async {
+    try {
+      final response = await _delete('$baseUrl/noticias/$id');
+      if (response.statusCode == 200) return {'success': true, 'data': jsonDecode(response.body)};
+      return {'success': false, 'message': 'Error ${response.statusCode}: ${response.body}'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
 }
+

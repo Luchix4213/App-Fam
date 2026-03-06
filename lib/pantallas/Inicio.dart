@@ -62,51 +62,31 @@ class PantallaInicio extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 50),
                     // Logo
                     Container(
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                        color: Colors.white, // fondo blanco
+                        borderRadius: BorderRadius.circular(25), // bordes redondeados
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.15),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           )
-                        ]
+                        ],
                       ),
-                      child: Image.asset(
-                        "assets/images/famlogo.png",
-                        height: 110,
+                      padding: const EdgeInsets.all(15), // espacio entre imagen y borde
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          "assets/images/famlogo2.png",
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 25),
-
-                    // Título Principal
-                    const Text(
-                      "FAM BOLIVIA",
-                      style: TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Subtítulo
-                    const Text(
-                      "Federación de Asociaciones\nMunicipales de Bolivia",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        height: 1.3,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 35),
 
                     // Tarjeta Translúcida Central
                     Container(
@@ -127,7 +107,7 @@ class PantallaInicio extends StatelessWidget {
                       child: Column(
                         children: const [
                           Text(
-                            "Bienvenido al sistema de búsqueda de\nautoridades municipales de la institución\nFAM Bolivia.",
+                            "Bienvenido al sistema de búsqueda de\nautoridades municipales de Bolivia.",
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white,
