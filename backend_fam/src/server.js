@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import sequelize from "./config/db.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
-import dotenv from "dotenv";
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
