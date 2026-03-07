@@ -12,6 +12,10 @@ const Asociacion = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    color: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
     nombre: {
       type: DataTypes.STRING(200),
       allowNull: false,
