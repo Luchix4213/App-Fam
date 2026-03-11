@@ -20,10 +20,6 @@ const Noticia = sequelize.define(
             type: DataTypes.BOOLEAN,
             defaultValue: true,
         },
-        creado_por: {
-            type: DataTypes.INTEGER,
-            allowNull: true, // Asumimos opcional por ahora si no hay foreing key estricta en DB vieja
-        },
     },
     {
         tableName: "noticias",
