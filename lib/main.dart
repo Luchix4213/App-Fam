@@ -8,9 +8,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Firebase.initializeApp remobido porque la app ahora es 100% publica
   await DatabaseHelper.instance.database; // Carga y crea DB si no existe
   runApp(const MainApp());
 }

@@ -24,45 +24,25 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuth() async {
-    // Inicializar el servicio de autenticación
+    // Inicializar el servicio para guardar offline/cache y configs básicos
     await AuthService.initialize();
 
-    // Sincronizar datos en segundo plano (no bloqueante o con timeout corto si se desea)
-    // Para asegurar datos frescos al inicio, podríamos esperar.
-    // Usaremos un "fire and forget" seguro o esperamos si queremos garantizar datos.
-    // Dado que existe JSON local, no bloqueamos demasiado.
-    SyncService.syncAll(); 
+    // Sincronizar datos silenciosamente
+    try {
+      await SyncService.syncAll();
+    } catch(e) {
+      debugPrint("Error sync al inicio: $e");
+    }
 
-    // Esperar un poco para mostrar el splash
+    // Esperar un poco para mostrar el splash (animacion)
     await Future.delayed(const Duration(seconds: 2));
 
-    // Verificar si hay un token válido
-    var isValid = await AuthService.verifyToken();
-
+    // Todo mundo entra directamente a la app publica sin preguntar login
     if (mounted) {
-      if (AuthService.isLoggedIn && isValid) {
-        // Usuario logueado y token válido
-        final role = await AuthService.getUserRole();
-        final isAdmin = role != null && (role.toLowerCase() == 'admin' || role.toLowerCase() == 'superadmin' || role.toLowerCase() == 'fam');
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => isAdmin ? const DashboardScreen() : const PublicMainScreen(),
-          ),
-        );
-      } else {
-        // Usuario no logueado o token inválido
-        if (AuthService.isLoggedIn) {
-          // Token inválido, hacer logout
-          await AuthService.logout();
-        }
-        // Exigir login para todos (ya sea admin o usuario público)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const PantallaInicio()),
+      );
     }
   }
 
