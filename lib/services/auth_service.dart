@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   // Cambia esta URL por la URL de tu backend cuando esté desplegado
-  static const String baseUrl = 'http://192.168.1.15:4000/api'; // Para emulador Android fisicamente
+  static const String baseUrl = 'https://api-fambolivia.onrender.com/api'; // Para emulador Android fisicamente
   //static const String baseUrl = 'http://172.29.220.131:4000/api'; 
   //static const String baseUrl = 'http://10.0.2.2:4000/api'; 
   
@@ -83,17 +83,33 @@ class AuthService {
         _refreshToken = data['refreshToken'];
         _user = data['user'];
 
-        // Guardar de forma segura
+        // Guardar Access Token de forma segura
         await _storage.write(key: 'token', value: _token!);
-        if (_refreshToken != null) await _storage.write(key: 'refreshToken', value: _refreshToken!);
+        
+        // Seguridad: Para admin/fam no guardamos el Refresh Token
+        final String role = _user!['role'] ?? _user!['rol'] ?? 'usuario';
+        if (role == 'usuario') {
+          if (_refreshToken != null) await _storage.write(key: 'refreshToken', value: _refreshToken!);
+        } else {
+          await _storage.delete(key: 'refreshToken');
+          _refreshToken = null; // Borrar también de memoria
+        }
+
         await _storage.write(key: 'user', value: json.encode(_user));
 
         return {'success': true, 'data': data};
+      } else if (response.statusCode == 429) {
+          // Handle Rate Limiter Error
+          return {'success': false, 'message': 'Demasiados intentos.\nIntenta nuevamente en 15 minutos.'};
       } else {
         return {'success': false, 'message': data['message'] ?? 'Error en el login'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Error de conexión: $e'};
+      // Avoid showing the raw URL Exception (SocketException/ClientException)
+      if (e.toString().contains('SocketException') || e.toString().contains('ClientException') || e.toString().contains('Failed host lookup')) {
+        return {'success': false, 'message': 'No se pudo conectar al servidor. Revisa tu conexión a internet.'};
+      }
+      return {'success': false, 'message': 'Ocurrió un error inesperado al iniciar sesión.'};
     }
   }
 
@@ -122,7 +138,15 @@ class AuthService {
         _user = data['user'];
 
         await _storage.write(key: 'token', value: _token!);
-        if (_refreshToken != null) await _storage.write(key: 'refreshToken', value: _refreshToken!);
+        
+        final String role = _user!['role'] ?? _user!['rol'] ?? 'usuario';
+        if (role == 'usuario') {
+          if (_refreshToken != null) await _storage.write(key: 'refreshToken', value: _refreshToken!);
+        } else {
+          await _storage.delete(key: 'refreshToken');
+          _refreshToken = null;
+        }
+
         await _storage.write(key: 'user', value: json.encode(_user));
 
         return {'success': true, 'data': data};

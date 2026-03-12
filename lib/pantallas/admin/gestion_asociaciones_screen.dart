@@ -10,6 +10,7 @@ import 'package:fam_intento1/core/image_helper.dart';
 import 'package:fam_intento1/pantallas/login.dart';
 import 'package:fam_intento1/pantallas/Inicio.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class GestionAsociacionesScreen extends StatefulWidget {
   const GestionAsociacionesScreen({super.key});
@@ -535,6 +536,7 @@ class _AsociacionFormState extends State<AsociacionForm> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   bool _isSaving = false;
+  Color _selectedColor = const Color(0xFF1E88E5); // Default blue
 
   @override
   void initState() {
@@ -544,6 +546,11 @@ class _AsociacionFormState extends State<AsociacionForm> {
       _nombreCtrl.text = a['nombre'] ?? '';
       _aliasCtrl.text = a['alias'] ?? '';
       _estado = (a['estado'] ?? 'ACTIVO').toString().toUpperCase();
+      if (a['color'] != null && a['color'].toString().isNotEmpty) {
+        String hex = a['color'].toString().replaceAll('#', '');
+        if (hex.length == 6) hex = 'FF$hex';
+        _selectedColor = Color(int.parse(hex, radix: 16));
+      }
     }
   }
 
@@ -561,6 +568,7 @@ class _AsociacionFormState extends State<AsociacionForm> {
         'nombre': _nombreCtrl.text,
         'alias': _aliasCtrl.text,
         'estado': _estado.toLowerCase(),
+        'color': '#${_selectedColor.value.toRadixString(16).substring(2, 8).toUpperCase()}',
       };
       
        Map<String, dynamic> res;
@@ -578,6 +586,41 @@ class _AsociacionFormState extends State<AsociacionForm> {
     } finally {
       if(mounted) setState(() => _isSaving = false);
     }
+  }
+
+  void _showColorPicker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Elegir Color', style: TextStyle(fontWeight: FontWeight.bold)),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _selectedColor,
+              onColorChanged: (color) {
+                setState(() => _selectedColor = color);
+              },
+              enableAlpha: false,
+              displayThumbColor: true,
+              showLabel: true,
+              paletteType: PaletteType.hsv,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _selectedColor,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Aceptar', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -676,6 +719,36 @@ class _AsociacionFormState extends State<AsociacionForm> {
                   _buildTextField(_nombreCtrl, "Nombre *", validator: (v) => v!.isEmpty ? 'Requerido' : null),
                   const SizedBox(height: 12),
                   _buildTextField(_aliasCtrl, "Alias / Sigla"),
+
+                  const SizedBox(height: 12),
+                  _buildSectionTitle("Color Identificativo"),
+                  GestureDetector(
+                    onTap: _showColorPicker,
+                    child: Container(
+                      height: 55,
+                      decoration: BoxDecoration(
+                        color: _selectedColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300, width: 2),
+                        boxShadow: [
+                          BoxShadow(color: _selectedColor.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+                        ]
+                      ),
+                      child: const Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.color_lens, color: Colors.white, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              "Toca para cambiar el color",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, shadows: [Shadow(color: Colors.black45, blurRadius: 2)]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 30),
                   

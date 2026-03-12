@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/services/auth_service.dart';
+import 'package:fam_intento1/services/sync_service.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
@@ -11,11 +12,13 @@ import 'package:fam_intento1/pantallas/contacto_screen.dart';
 class MiembrosScreen extends StatefulWidget {
   final int asociacionId;
   final String asociacionNombre;
+  final Color? asociacionColor;
 
   const MiembrosScreen({
     super.key,
     required this.asociacionId,
     required this.asociacionNombre,
+    this.asociacionColor,
   });
 
   @override
@@ -38,12 +41,20 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     super.initState();
     _loadMiembros();
     _searchCtrl.addListener(_filter);
+    SyncService.onDataUpdated.addListener(_onDataUpdated);
   }
 
   @override
   void dispose() {
+    SyncService.onDataUpdated.removeListener(_onDataUpdated);
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  void _onDataUpdated() {
+    if (mounted) {
+      _loadMiembros(forceLocalOnly: true);
+    }
   }
 
   void _filter() {
@@ -58,7 +69,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     });
   }
 
-  Future<void> _loadMiembros() async {
+  Future<void> _loadMiembros({bool forceLocalOnly = false}) async {
     // 1. Cargar datos locales inmediatamente
     try {
       final localData = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
@@ -79,37 +90,39 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     }
 
     // 2. Intentar actualizar en background desde la API
-    try {
-      final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
-      if (res['success'] == true) {
-        final List<dynamic> data = res['data'];
-        
-        // Sanitizar y guardar en SQLite
-        List<Map<String, dynamic>> miemClean = data.map((item) {
-          Map<String, dynamic> map = Map<String, dynamic>.from(item);
-          map.removeWhere((key, value) => value is Map || value is List);
-          return map;
-        }).toList();
+    if (!forceLocalOnly) {
+      try {
+        final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
+        if (res['success'] == true) {
+          final List<dynamic> data = res['data'];
+          
+          // Sanitizar y guardar en SQLite
+          List<Map<String, dynamic>> miemClean = data.map((item) {
+            Map<String, dynamic> map = Map<String, dynamic>.from(item);
+            map.removeWhere((key, value) => value is Map || value is List);
+            return map;
+          }).toList();
 
-        await DatabaseHelper.instance.syncMinistros(miemClean);
-        
-        // Actualizamos UI solo si seguimos en pantalla
-        if (mounted) {
+          await DatabaseHelper.instance.syncMinistros(miemClean);
+          
+          // Actualizamos UI solo si seguimos en pantalla
+          if (mounted) {
+            setState(() {
+              _procesarListaMiembros(data);
+              _filter();
+              _isLoading = false;
+              _errorMessage = null;
+            });
+          }
+        }
+      } catch (apiError) {
+        print("Background Fetch Error: \$apiError.");
+        if (mounted && _miembros.isEmpty) {
           setState(() {
-            _procesarListaMiembros(data);
-            _filter();
             _isLoading = false;
-            _errorMessage = null;
+            _errorMessage = "No hay miembros disponibles y no hay conexión a internet.";
           });
         }
-      }
-    } catch (apiError) {
-      print("Background Fetch Error: \$apiError.");
-      if (mounted && _miembros.isEmpty) {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = "No hay miembros disponibles y no hay conexión a internet.";
-        });
       }
     }
   }
@@ -291,24 +304,33 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     
     // Datos display
     final String mainTitle = isAmdes
-        ? ((miembro['municipio'] ?? '').toString().isNotEmpty
+        ? ((miembro['municipio'] != null && miembro['municipio'].toString().isNotEmpty)
             ? miembro['municipio']
-            : (miembro['alias'] ?? miembro['nombre'] ?? 'Sin nombre'))
-        : (miembro['alias'] ?? miembro['nombre'] ?? 'Sin nombre');
-        
-    final String? subtitle = (!isAmdes && miembro['nombre'] != null && miembro['alias'] != null)
-        ? 'Municipio: ${miembro['municipio'] ?? ''}'
-        : (miembro['nombre'] != null ? '${miembro['nombre']}' : null);
+            : (miembro['nombre'] ?? 'Sin nombre'))
+        : (miembro['alias'] != null && miembro['alias'].toString().isNotEmpty
+            ? miembro['alias']
+            : (miembro['nombre'] ?? 'Sin nombre'));
+            
+    final String? subtitle1 = isAmdes
+        ? (miembro['nombre'] != null ? 'Nombre: ${miembro['nombre']}' : null)
+        : (miembro['municipio'] != null && miembro['municipio'].toString().isNotEmpty ? 'Municipio: ${miembro['municipio']}' : null);
 
-    final String? partido = miembro['partido_politico']; // Suponiendo este campo o similar
+    final String? subtitle2 = !isAmdes
+        ? (miembro['nombre'] != null ? 'Nombre: ${miembro['nombre']}' : null)
+        : null;
+
+    final String? badgeAlias = isAmdes ? miembro['alias'] : null;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: widget.asociacionColor != null 
+            ? Border.all(color: widget.asociacionColor!, width: 2) 
+            : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: widget.asociacionColor?.withOpacity(0.2) ?? Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -335,14 +357,16 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: const LinearGradient(
+                      gradient: widget.asociacionColor == null ? const LinearGradient(
                         colors: [appColores.assocGradientMiddle, appColores.blueGradientBottom], 
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                      ),
+                      ) : null,
+                      color: widget.asociacionColor,
+                      border: widget.asociacionColor != null ? Border.all(color: widget.asociacionColor!.withOpacity(0.5), width: 3) : null,
                       boxShadow: [
                         BoxShadow(
-                          color: appColores.assocGradientMiddle.withOpacity(0.2),
+                          color: widget.asociacionColor?.withOpacity(0.3) ?? appColores.assocGradientMiddle.withOpacity(0.2),
                           blurRadius: 8,
                           offset: const Offset(0, 3)
                         )
@@ -379,19 +403,30 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                           color: Color(0xFF263238),
                         ),
                       ),
-                      if (subtitle != null) ...[
+                      if (subtitle1 != null) ...[
                         const SizedBox(height: 4),
                         Text(
-                          subtitle,
+                          subtitle1,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
-                      // Tag Partido (Optional if exists)
-                      if (partido != null && partido.isNotEmpty) ...[
+                      if (subtitle2 != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle2,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                      // Tag Partido/Alias (Optional if exists)
+                      if (badgeAlias != null && badgeAlias.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -400,7 +435,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            partido,
+                            badgeAlias,
                             style: const TextStyle(
                               color: appColores.badgeBlue,
                               fontSize: 10,
@@ -421,7 +456,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
             ),
 
             // Detalles Contacto
-            _buildDetailRow(Icons.phone_outlined, "Tel. Público:", miembro['telefono_publico'], Colors.green),
+            _buildDetailRow(Icons.phone_outlined, "Telefono:", miembro['telefono_publico'], Colors.green),
             _buildDetailRow(Icons.fax_outlined, "Fax:", miembro['telefono_fax'], Colors.teal),
             _buildDetailRow(Icons.email_outlined, "Correo:", miembro['correo_publico'], Colors.blueAccent),
             _buildDetailRow(Icons.location_on_outlined, "Dirección:", miembro['direccion'], Colors.redAccent),

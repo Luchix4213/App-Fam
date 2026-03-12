@@ -23,7 +23,8 @@ class PantallaInicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
+      backgroundColor: const Color(0xFF135685),
       // App Bar transparente para botones de navegación (Login/Dashboard/Cerrar Sesión)
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -62,105 +63,114 @@ class PantallaInicio extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 50),
+                    //const SizedBox(height: 10),
                     // Logo
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white, // fondo blanco
-                        borderRadius: BorderRadius.circular(25), // bordes redondeados
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          )
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(15), // espacio entre imagen y borde
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.asset(
-                          "assets/images/famlogo2.png",
-                          height: 150,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                    Image.asset(
+                      "assets/icon/icono2.png",
+                      height: 220,
+                      width: 220,
+                      fit: BoxFit.contain,
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 10),
 
-                    // Tarjeta Translúcida Central
+                    // Tarjeta Translúcida Central (Ahora con gradiente)
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 35),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF4AC2E3), // Celeste claro
+                            Color(0xFF035E9B), // Azul medio oscuro
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(40),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withOpacity(0.2),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
                         ],
                       ),
                       child: Column(
-                        children: const [
-                          Text(
-                            "Bienvenido al sistema de búsqueda de\nautoridades municipales de Bolivia.",
+                        children: [
+                          const Text(
+                            "Bienvenido",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 24,
                               color: Colors.white,
-                              height: 1.5,
+                              fontWeight: FontWeight.w400,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 20),
-                          Text(
-                            "¡Acompáñanos!",
+                          const SizedBox(height: 15),
+                          const Text(
+                            "al sistema de busqueda de\nautoridades municipales de\nBolivia.",
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Colors.white70,
+                              height: 1.5,
+                              fontWeight: FontWeight.w300,
                             ),
                             textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 25),
+                          Container(
+                            height: 1.5,
+                            width: 150,
+                            color: Colors.white,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 35),
 
-                    // Botón Principal Verde
+                    // Botón Principal Celeste Brillante
                     SizedBox(
                       width: double.infinity,
                       height: 55,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: appColores.primaryGreen,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFF6DE4F1), // Celeste bien claro brillante
+                              Color(0xFF09A6D8), // Celeste intermedio
+                            ],
                           ),
-                          elevation: 8,
-                          shadowColor: appColores.primaryGreen.withOpacity(0.5),
-                        ),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder:(context) => const AsociacionesScreen()));
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "VER ASOCIACIONES",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward, size: 18, color: Colors.white),
                           ],
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder:(context) => const AsociacionesScreen()));
+                          },
+                          child: const Text(
+                            "VER ASOCIACIONES",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
                         ),
                       ),
                     ),

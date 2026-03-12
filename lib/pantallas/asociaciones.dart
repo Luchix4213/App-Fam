@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
+import 'package:fam_intento1/services/sync_service.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/pantallas/miembros.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,12 +27,20 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
     super.initState();
     _loadAsociaciones();
     _searchCtrl.addListener(_filterAsociaciones);
+    SyncService.onDataUpdated.addListener(_onDataUpdated);
   }
 
   @override
   void dispose() {
+    SyncService.onDataUpdated.removeListener(_onDataUpdated);
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  void _onDataUpdated() {
+    if (mounted) {
+      _loadAsociaciones(forceLocalOnly: true);
+    }
   }
 
   void _filterAsociaciones() {
@@ -45,13 +54,38 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
     });
   }
 
-  Future<void> _loadAsociaciones() async {
+  List<dynamic> _sortAsociaciones(List<dynamic> list) {
+    final sortedList = List<dynamic>.from(list);
+    sortedList.sort((a, b) {
+      final nameA = (a['alias'] ?? a['nombre'] ?? '').toString().toUpperCase();
+      final nameB = (b['alias'] ?? b['nombre'] ?? '').toString().toUpperCase();
+      
+      int getPriority(String name) {
+        // Usa RegExp con word boundaries para exactamente "AMB" o su nombre largo
+        if (name == 'SAM') return 1;
+        if (name.contains('ACOBOL')) return 2;
+        if (RegExp(r'\bAMB\b').hasMatch(name) || name.contains('MUNICIPALIDADES DE BOLIVIA')) return 3;
+        return 4;
+      }
+      
+      final priorityA = getPriority(nameA);
+      final priorityB = getPriority(nameB);
+      
+      if (priorityA != priorityB) {
+        return priorityA.compareTo(priorityB);
+      }
+      return nameA.compareTo(nameB);
+    });
+    return sortedList;
+  }
+
+  Future<void> _loadAsociaciones({bool forceLocalOnly = false}) async {
     // 1. Cargar datos locales inmediatamente (Ultra rápido)
     try {
       final localData = await DatabaseHelper.instance.getAllAsociaciones();
       if (localData.isNotEmpty) {
          setState(() {
-          _asociaciones = localData;
+          _asociaciones = _sortAsociaciones(localData);
           _filteredAsociaciones = List.from(_asociaciones);
           _isLoading = false;
         });
@@ -64,41 +98,43 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
     }
 
     // 2. Intentar actualizar en background desde la API (Silencioso)
-    try {
-      final res = await ApiService.getAllAsociaciones();
-      if (res['success'] == true) {
-        final List<dynamic> data = res['data'];
-        
-        // Sanitizar y guardar en SQLite
-        List<Map<String, dynamic>> asocClean = data.map((item) {
-          Map<String, dynamic> map = Map<String, dynamic>.from(item);
-          map.removeWhere((key, value) => value is Map || value is List);
-          return map;
-        }).toList();
-        
-        // Actualizamos la copia local
-        await DatabaseHelper.instance.syncAsociaciones(asocClean);
-        
-        // Actualizamos UI solo si seguimos en pantalla
-        if (mounted) {
-           setState(() {
-            _asociaciones = data;
-            // Si el usuario estaba buscando algo, re-aplicamos el filtro
-            _filterAsociaciones(); 
-            _isLoading = false;
-            _errorMessage = null;
-          });
+    if (!forceLocalOnly) {
+      try {
+        final res = await ApiService.getAllAsociaciones();
+        if (res['success'] == true) {
+          final List<dynamic> data = res['data'];
+          
+          // Sanitizar y guardar en SQLite
+          List<Map<String, dynamic>> asocClean = data.map((item) {
+            Map<String, dynamic> map = Map<String, dynamic>.from(item);
+            map.removeWhere((key, value) => value is Map || value is List);
+            return map;
+          }).toList();
+          
+          // Actualizamos la copia local
+          await DatabaseHelper.instance.syncAsociaciones(asocClean);
+          
+          // Actualizamos UI solo si seguimos en pantalla
+          if (mounted) {
+             setState(() {
+              _asociaciones = _sortAsociaciones(data);
+              // Si el usuario estaba buscando algo, re-aplicamos el filtro
+              _filterAsociaciones(); 
+              _isLoading = false;
+              _errorMessage = null;
+            });
+          }
         }
-      }
-    } catch (apiError) {
-      // 3. Fallo de red. Manejamos en silencio si ya teníamos datos, o mostramos error si estaba vacío.
-      print("Background Fetch Error: \$apiError.");
-      if (mounted) {
-        if (_asociaciones.isEmpty) {
-           setState(() {
-            _isLoading = false;
-            _errorMessage = "No hay asociaciones disponibles y no hay conexión a internet.";
-          });
+      } catch (apiError) {
+        // 3. Fallo de red. Manejamos en silencio si ya teníamos datos, o mostramos error si estaba vacío.
+        print("Background Fetch Error: \$apiError.");
+        if (mounted) {
+          if (_asociaciones.isEmpty) {
+             setState(() {
+              _isLoading = false;
+              _errorMessage = "No hay asociaciones disponibles y no hay conexión a internet.";
+            });
+          }
         }
       }
     }
@@ -348,14 +384,26 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
     final imageUrl = asociacion['foto'] ?? '';
     // Si contiene ciertas palabras (como ACOBOL, AMB) u otro prefijo asocia a logos
     bool isLogo = true; // Por default asumimos logo para asociaciones
+    
+    // Extraer color
+    Color? asociacionColor;
+    final colorHex = asociacion['color'];
+    if (colorHex != null && colorHex.toString().isNotEmpty) {
+      String hex = colorHex.toString().replaceAll('#', '');
+      if (hex.length == 6) hex = 'FF$hex';
+      asociacionColor = Color(int.parse(hex, radix: 16));
+    }
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: asociacionColor != null 
+            ? Border.all(color: asociacionColor, width: 2) 
+            : null,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF90A4AE).withOpacity(0.15),
+            color: asociacionColor?.withOpacity(0.2) ?? const Color(0xFF90A4AE).withOpacity(0.15),
             blurRadius: 15,
             offset: const Offset(0, 8),
             spreadRadius: 0,
@@ -367,13 +415,14 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {
+          onTap: () {            
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MiembrosScreen(
                   asociacionId: asociacion['id'],
                   asociacionNombre: nombreAsoc,
+                  asociacionColor: asociacionColor,
                 ),
               ),
             );

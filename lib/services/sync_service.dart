@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart'; // Para ValueNotifier
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
 
 class SyncService {
+  // Timbre global para notificar a la UI cuando hay nuevos datos
+  static final ValueNotifier<int> onDataUpdated = ValueNotifier(0);
+  
   
   // Sincronizar todo (Asociaciones -> Miembros)
   static Future<void> syncAll() async {
@@ -79,6 +83,10 @@ class SyncService {
       }
 
       print("[SyncService] Proceso de sincronización finalizado.");
+      
+      // Tocar la campana para que todas las pantallas se refresquen
+      onDataUpdated.value++;
+      
     } catch (e) {
       print("[SyncService] CRITICAL ERROR / NETWORK EXCEPTION durante la sincronización: \$e");
       print("[SyncService] La limpieza total fue abortada para proteger el caché Offline.");

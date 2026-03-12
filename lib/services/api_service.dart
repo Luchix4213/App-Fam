@@ -7,7 +7,7 @@ import 'package:fam_intento1/services/auth_service.dart';
 
 class ApiService {
   
-  static const String baseUrl = 'http://192.168.1.15:4000/api'; 
+  static const String baseUrl = 'https://api-fambolivia.onrender.com/api'; 
   //static const String baseUrl = 'http://172.29.220.131:4000/api';
   //static const String baseUrl = 'http://10.0.2.2:4000/api';  
 

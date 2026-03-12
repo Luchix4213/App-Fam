@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui';
+import 'dart:async'; // Para el Timer
+import 'package:fam_intento1/services/sync_service.dart';
 
 class PublicMainScreen extends StatefulWidget {
   const PublicMainScreen({super.key});
@@ -17,6 +19,7 @@ class PublicMainScreen extends StatefulWidget {
 
 class _PublicMainScreenState extends State<PublicMainScreen> {
   int _currentIndex = 0;
+  Timer? _syncTimer;
 
   final List<Widget> _screens = [
     const PantallaInicio(), // Tab 0: Inicio
@@ -30,6 +33,17 @@ class _PublicMainScreenState extends State<PublicMainScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowNoticias();
     });
+    
+    // Iniciar el temporizador espía para sincronizar cada 5 minutos
+    _syncTimer = Timer.periodic(const Duration(minutes: 2), (timer) {
+      SyncService.syncAll();
+    });
+  }
+
+  @override
+  void dispose() {
+    _syncTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _checkAndShowNoticias() async {
@@ -41,15 +55,19 @@ class _PublicMainScreenState extends State<PublicMainScreen> {
           // Tomar la primera noticia (la mas reciente activa)
           final noticia = noticias.first;
           final int id = noticia['id'];
-          final String cacheKey = 'noticia_vista_$id';
+          final String cacheKey = 'noticia_vista_tiempo_$id';
           
           final prefs = await SharedPreferences.getInstance();
-          final bool yaVista = prefs.getBool(cacheKey) ?? false;
+          final int lastSeenMs = prefs.getInt(cacheKey) ?? 0;
+          final int nowMs = DateTime.now().millisecondsSinceEpoch;
           
-          if (!yaVista) {
+          // 2 horas = 2 * 60 * 60 * 1000 = 7,200,000 milisegundos
+          final bool mostrarNoticia = (nowMs - lastSeenMs) > 7200000;
+          
+          if (mostrarNoticia) {
              if (mounted) {
                await _showNoticiaPopup(noticia);
-               await prefs.setBool(cacheKey, true); // Marcar como vista
+               await prefs.setInt(cacheKey, nowMs); // Guardar el momento de la última vista
              }
           }
         }

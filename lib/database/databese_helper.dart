@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 17, // Version incrementada para limpiar campos de asociaciones
+      version: 18, // Version incrementada para limpiar campos de asociaciones y añadir color
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         // Borrar tablas viejas si existen
@@ -62,6 +62,7 @@ class DatabaseHelper {
       alias TEXT,
       nombre TEXT NOT NULL,
       foto TEXT,
+      color TEXT,
       estado TEXT DEFAULT 'activo'
     )
     ''');
@@ -140,7 +141,7 @@ class DatabaseHelper {
     
     // Solo permitir las columnas públicas que existen en la tabla sqlite (omitiendo createdAt y datos personales)
     final List<String> validColumns = [
-      'id', 'alias', 'nombre', 'estado', 'foto'
+      'id', 'alias', 'nombre', 'estado', 'foto', 'color'
     ];
 
     for (var item in list) {
