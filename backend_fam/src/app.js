@@ -14,6 +14,10 @@ import User from "./models/user.model.js";
 import "./models/index.js";
 
 const app = express();
+
+// Confiar en el proxy de Render para que express-rate-limit funcione sin error
+app.set('trust proxy', 1);
+
 app.use(helmet({ crossOriginResourcePolicy: false })); // Permite cargar imagenes desde flutter
 app.use(cors());
 app.use(express.json());
