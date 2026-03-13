@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
-import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/services/sync_service.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';

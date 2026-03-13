@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
-import 'package:fam_intento1/services/auth_service.dart';
-import 'package:fam_intento1/pantallas/login.dart';
-import 'package:fam_intento1/pantallas/Inicio.dart';
 import 'package:fam_intento1/services/sync_service.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart';
-import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,30 +10,25 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-
-
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _initApp();
   }
 
-  Future<void> _checkAuth() async {
-    // Inicializar el servicio para guardar offline/cache y configs básicos
-    await AuthService.initialize();
-
-    // Sincronizar datos silenciosamente
+  Future<void> _initApp() async {
+    // Sincronizar datos silenciosamente desde la API
     try {
       await SyncService.syncAll();
-    } catch(e) {
+    } catch (e) {
       debugPrint("Error sync al inicio: $e");
     }
 
-    // Esperar un poco para mostrar el splash (animacion)
+    // Mostrar splash brevemente
     await Future.delayed(const Duration(seconds: 2));
 
-    // Todo mundo entra directamente a la app publica sin preguntar login
+    // Ir directo a la app pública
     if (mounted) {
       Navigator.pushReplacement(
         context,

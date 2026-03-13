@@ -23,8 +23,10 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const response = await api.post('/auth/login', { email, password });
-            if (response.data.success) {
-                const { token, user } = response.data;
+            const { token, user } = response.data;
+
+            // Si el backend devolvió un token, el login fue exitoso
+            if (token && user) {
                 // Solo permitir admins
                 if (user.role !== 'admin' && user.role !== 'fam') {
                     throw new Error('No tienes permisos de administrador.');

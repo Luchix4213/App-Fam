@@ -1,15 +1,18 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
-// import DashboardHome from '../pages/DashboardHome';
+import DashboardLayout from './components/layout/DashboardLayout';
+import DashboardHome from './pages/DashboardHome';
+import AsociacionesList from './pages/asociaciones/AsociacionesList';
+import MiembrosList from './pages/miembros/MiembrosList';
+import PersonalList from './pages/personal/PersonalList';
+import NoticiasList from './pages/noticias/NoticiasList';
+import UsuariosList from './pages/usuarios/UsuariosList';
 
-// Protective Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div></div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-
   return children;
 };
 
@@ -18,20 +21,20 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
 
-      {/* Rutas Privadas */}
+      {/* Dashboard Routes */}
       <Route path="/" element={
         <ProtectedRoute>
-          {/* Aquí irá el Layout de Sidebar en el futuro */}
-          <div className="p-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Bienvenido al Panel de Administración
-            </h1>
-            <p className="mt-4 text-gray-600">Este es el dashboard. Pronto agregaremos las vistas.</p>
-          </div>
+          <DashboardLayout />
         </ProtectedRoute>
-      } />
+      }>
+        <Route index element={<DashboardHome />} />
+        <Route path="asociaciones" element={<AsociacionesList />} />
+        <Route path="miembros" element={<MiembrosList />} />
+        <Route path="personal" element={<PersonalList />} />
+        <Route path="noticias" element={<NoticiasList />} />
+        <Route path="usuarios" element={<UsuariosList />} />
+      </Route>
 
-      {/* Route fall-back */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
