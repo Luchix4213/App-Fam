@@ -124,17 +124,28 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
               _errorMessage = null;
             });
           }
+        } else {
+          // El backend devolvió success=false (Ej: base de datos vacía o error 404/500)
+          print("Fallo de API: \${res['message']}");
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              if (_asociaciones.isEmpty) {
+                _errorMessage = res['message'] ?? "No se encontraron datos en el servidor.";
+              }
+            });
+          }
         }
       } catch (apiError) {
         // 3. Fallo de red. Manejamos en silencio si ya teníamos datos, o mostramos error si estaba vacío.
         print("Background Fetch Error: \$apiError.");
         if (mounted) {
-          if (_asociaciones.isEmpty) {
-             setState(() {
-              _isLoading = false;
+          setState(() {
+            _isLoading = false;
+            if (_asociaciones.isEmpty) {
               _errorMessage = "No hay asociaciones disponibles y no hay conexión a internet.";
-            });
-          }
+            }
+          });
         }
       }
     }

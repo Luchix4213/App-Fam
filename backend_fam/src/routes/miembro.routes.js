@@ -16,8 +16,8 @@ const router = express.Router();
 router.get("/asociacion/:asociacionId", getMiembrosByAsociacion);
 
 // Rutas administrativas
-router.get("/", authMiddleware, listMiembros);
-router.get("/:id", authMiddleware, getMiembro);
+router.get("/", listMiembros);
+router.get("/:id", getMiembro);
 router.post("/", authMiddleware, roleMiddleware(["admin", "fam"]), upload('miembros').single('foto'), createMiembro);
 router.put("/:id", authMiddleware, roleMiddleware(["admin", "fam"]), upload('miembros').single('foto'), updateMiembro);
 router.delete("/:id", authMiddleware, roleMiddleware(["admin"]), deleteMiembro);
