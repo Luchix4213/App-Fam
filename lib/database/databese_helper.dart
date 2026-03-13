@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 18, // Version incrementada para limpiar campos de asociaciones y añadir color
+      version: 19, // Version incrementada para limpiar campos de asociaciones y añadir color
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         // Borrar tablas viejas si existen
