@@ -13,20 +13,36 @@ class ApiService {
     };
   }
 
-  static Future<Map<String, dynamic>> _get(String url) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl$url'),
-      headers: _getHeaders(),
-    );
-    return jsonDecode(response.body) is List
-        ? {'success': true, 'data': jsonDecode(response.body)}
-        : jsonDecode(response.body);
+  static Future<Map<String, dynamic>> _get(String url, {String? updatedAfter}) async {
+    try {
+      final uriStr = updatedAfter != null 
+          ? '$baseUrl$url${url.contains('?') ? '&' : '?'}updated_after=$updatedAfter'
+          : '$baseUrl$url';
+          
+      final response = await http.get(
+        Uri.parse(uriStr),
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 60));
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        return decoded is List
+            ? {'success': true, 'data': decoded}
+            : decoded;
+      } else {
+        return {'success': false, 'message': 'Error API: ${response.statusCode}', 'data': []};
+      }
+    } on TimeoutException {
+      return {'success': false, 'message': 'Timeout del servidor.', 'data': []};
+    } catch (e) {
+      return {'success': false, 'message': 'Error de red.', 'data': []};
+    }
   }
 
   // =============== ASOCIACIONES (solo lectura) ===============
 
-  static Future<Map<String, dynamic>> getAllAsociaciones({String estado = 'activo'}) async {
-    final res = await _get('/asociaciones');
+  static Future<Map<String, dynamic>> getAllAsociaciones({String estado = 'activo', String? updatedAfter}) async {
+    final res = await _get('/asociaciones', updatedAfter: updatedAfter);
     if (res['success'] == true || res is List || res['data'] is List) {
       final list = res['data'] is List ? res['data'] : (res is List ? res : []);
       final filtered = (list as List).where((a) => 
@@ -47,8 +63,8 @@ class ApiService {
     return res;
   }
 
-  static Future<Map<String, dynamic>> getAllMiembros({String estado = 'activo'}) async {
-    final res = await _get('/miembros');
+  static Future<Map<String, dynamic>> getAllMiembros({String estado = 'activo', String? updatedAfter}) async {
+    final res = await _get('/miembros', updatedAfter: updatedAfter);
     if (res['success'] == true || res['data'] is List) {
       final list = res['data'] is List ? res['data'] : [];
       final filtered = (list as List).where((m) =>
@@ -61,8 +77,8 @@ class ApiService {
 
   // =============== PERSONAL (solo lectura) ===============
 
-  static Future<Map<String, dynamic>> getAllPersonal({String estado = 'activo'}) async {
-    final res = await _get('/personal');
+  static Future<Map<String, dynamic>> getAllPersonal({String estado = 'activo', String? updatedAfter}) async {
+    final res = await _get('/personal', updatedAfter: updatedAfter);
     if (res['success'] == true || res['data'] is List) {
       final list = res['data'] is List ? res['data'] : [];
       final filtered = (list as List).where((p) =>
@@ -75,8 +91,8 @@ class ApiService {
 
   // =============== NOTICIAS (solo lectura) ===============
 
-  static Future<Map<String, dynamic>> getAllNoticias({bool activas = false}) async {
-    final res = await _get('/noticias');
+  static Future<Map<String, dynamic>> getAllNoticias({bool activas = false, String? updatedAfter}) async {
+    final res = await _get('/noticias', updatedAfter: updatedAfter);
     if (res['success'] == true || res['data'] is List) {
       final list = res['data'] is List ? res['data'] : [];
       if (activas) {
