@@ -6,6 +6,20 @@
     "telefono_personal": "60501840",
     "telefono_publico": "1111111111",
     "telefono_fax": "2-2138503 -71962029",
+    "correo_personal": "exampleoriginpruebagit@gmail.com",
+    "correo_publico": "examplepublic@gmail.com",
+    "direccion_gam": "Av. 6 de Marzo calle 4",
+    "tipo_miembro": "ALCALDE",
+    "estado": "activo",
+    "id_asociacion": "1"
+  },
+  {
+    "alias": "VENCEREMOS",
+    "nombre": "Constantino Gutiérrez Catacora",
+    "municipio": "ACHACACHI",
+    "telefono_personal": "60501840",
+    "telefono_publico": "1111111111",
+    "telefono_fax": "2-2138503 -71962029",
     "correo_personal": "exampleorigin@gmail.com",
     "correo_publico": "examplepublic@gmail.com",
     "direccion_gam": "Av. 6 de Marzo calle 4",
@@ -1258,8 +1272,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "C-A",
     "nombre": "David Anzaldo Anzaldo",
     "municipio": "CAMIRI",
@@ -1272,8 +1286,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "SCB",
     "nombre": "Sandra Muñoz Gutiérrez",
     "municipio": "COLPA BÉLGICA",
@@ -1286,8 +1300,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jhonny Vocal Andrade",
     "municipio": "COMARAPA",
@@ -1300,8 +1314,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Mauricio Viera Canido",
     "municipio": "CONCEPCIÓN",
@@ -1314,8 +1328,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Raúl Gonzalo Alvis Claudio",
     "municipio": "COTOCA",
@@ -1328,8 +1342,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Hugo Gutiérrez Vique",
     "municipio": "CUATRO CAÑADAS",
@@ -1342,8 +1356,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "DEMOCRATAS",
     "nombre": "Marcelo Villagra Quispe",
     "municipio": "CUEVO",
@@ -1356,8 +1370,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "Celvy Orellana Costa",
     "municipio": "EL CARMEN RIVERO TORREZ",
@@ -1370,8 +1384,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Proofel Huaylla Arteaga",
     "municipio": "EL PUENTE",
@@ -1384,8 +1398,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Hediberto Cuellar Cuva",
     "municipio": "EL TORNO",
@@ -1398,8 +1412,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Simar Márquez Serrano",
     "municipio": "FERNÁNDEZ ALONSO",
@@ -1412,8 +1426,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Roly Rolando Oño Añez",
     "municipio": "GENERAL AGUSTÍN SAAVEDRA",
@@ -1426,8 +1440,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Rufino Correa Maldonado",
     "municipio": "LA GUARDIA",
@@ -1440,8 +1454,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "SIP",
     "nombre": "Héctor Contreras Álvarez",
     "municipio": "LAGUNILLAS",
@@ -1454,8 +1468,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ana Mendoza Aguilera",
     "municipio": "MAIRANA",
@@ -1468,8 +1482,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "UCS",
     "nombre": "Salvador Torrejon Oropeza",
     "municipio": "MINEROS",
@@ -1482,8 +1496,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Regys Medina Paz",
     "municipio": "MONTERO",
@@ -1496,8 +1510,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jaime Valverde Delgadillo",
     "municipio": "MORO MORO",
@@ -1510,8 +1524,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "DEMOCRATAS",
     "nombre": "Rubén Dario Mercado Suarez",
     "municipio": "OKINAWA UNO",
@@ -1524,8 +1538,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Hagapito Castro Vaca",
     "municipio": "PAILÓN",
@@ -1538,8 +1552,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Joel Ontiveros Rojas",
     "municipio": "PAMPA GRANDE",
@@ -1552,8 +1566,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "TPP",
     "nombre": "Neptaly Mendoza Duran",
     "municipio": "PORONGO (AYACUCHO)",
@@ -1566,8 +1580,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "SOL",
     "nombre": "María Luisa Ribera Antelo",
     "municipio": "PORTACHUELO",
@@ -1580,8 +1594,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "DEMOCRATAS",
     "nombre": "Roberto Andrade Limón",
     "municipio": "POSTRER VALLE",
@@ -1594,8 +1608,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ovidio Terrazas Rojas",
     "municipio": "PUCARA",
@@ -1608,8 +1622,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Mauricio Montero Yorge",
     "municipio": "PUERTO SUARÉZ",
@@ -1622,8 +1636,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "DEMOCRATAS",
     "nombre": "Carmen Aida Aguilera Rojas",
     "municipio": "QUIRUSILLAS",
@@ -1636,8 +1650,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "TPR",
     "nombre": "José Eduardo Díaz Ruiz",
     "municipio": "ROBORÉ",
@@ -1650,8 +1664,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Efraín Garrado Llenes",
     "municipio": "SAIPINA",
@@ -1664,8 +1678,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Eustaquio Casilla Fermín",
     "municipio": "SAMAIPATA",
@@ -1678,8 +1692,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Ángel Sumami Aguilera",
     "municipio": "SAN ANTONIO DE LOMERIO",
@@ -1692,8 +1706,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Oscar Cinko Yapu",
     "municipio": "SAN CARLOS",
@@ -1706,8 +1720,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "FE",
     "nombre": "Carlos Ruddy Dorado Flores",
     "municipio": "SAN IGNACIO (SAN IGNACIO DE VELASCO)",
@@ -1720,8 +1734,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Dany Añez Montalván",
     "municipio": "SAN JAVIER",
@@ -1734,8 +1748,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "SOL",
     "nombre": "Marbin Barbery Cespedes",
     "municipio": "SAN JOSÉ",
@@ -1748,8 +1762,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "DEMOCRATAS",
     "nombre": "Julio Limberth Rojas Tapia",
     "municipio": "SAN JUAN",
@@ -1762,8 +1776,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Willy Calderón Coca",
     "municipio": "SAN JULIÁN",
@@ -1776,8 +1790,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MATICO",
     "nombre": "Denny Carlos Velarde Villarroel",
     "municipio": "SAN MATÍAS",
@@ -1790,8 +1804,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Pedro Damián Dorado López",
     "municipio": "SAN MIGUEL (SAN MIGUEL DE VELASCO)",
@@ -1804,8 +1818,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ramiro Bartolomé Escalante Cala",
     "municipio": "SAN PEDRO",
@@ -1818,8 +1832,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Humberto Jorge Vargas Roca",
     "municipio": "SAN RAFAEL",
@@ -1832,8 +1846,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "German Sánchez Padilla",
     "municipio": "SAN RAMÓN",
@@ -1846,8 +1860,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "UCS",
     "nombre": "Max Jhonny Fernández Saucedo",
     "municipio": "SANTA CRUZ DE LA SIERRA",
@@ -1860,8 +1874,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Rimber Barrón Reyna",
     "municipio": "SANTA ROSA DEL SARA",
@@ -1874,8 +1888,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "CREEMOS",
     "nombre": "Ferddy Sharvel Escobar Revollo",
     "municipio": "TRIGAL",
@@ -1888,8 +1902,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "Carmen Aida Aguilera Aguilera",
     "municipio": "URUBICHÁ",
@@ -1902,8 +1916,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "VPT",
     "nombre": "Ignacio Morón Rojas",
     "municipio": "VALLEGRANDE",
@@ -1916,8 +1930,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Carlos Montaño Arias",
     "municipio": "WARNES",
@@ -1930,8 +1944,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Carlos Vallez Mamani",
     "municipio": "YAPACANÍ",
@@ -1944,8 +1958,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "2"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Rene Ortuño Mamani",
     "municipio": "AIQUILE",
@@ -1958,8 +1972,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ricardo Torrico Zambrana",
     "municipio": "ALALAY",
@@ -1972,8 +1986,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Emeliano Pérez Cabezas",
     "municipio": "ANZALDO",
@@ -1986,8 +2000,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Edwin Rojas Rioja",
     "municipio": "ARANI",
@@ -2000,8 +2014,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Crispín Chiri Berna",
     "municipio": "ARBIETO",
@@ -2014,8 +2028,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Wily Ordoñez Caicova",
     "municipio": "ARQUE",
@@ -2028,8 +2042,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ignacio Characayo Arias",
     "municipio": "BOLIVAR",
@@ -2042,8 +2056,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Nancy Colque Mamani",
     "municipio": "CAPINOTA",
@@ -2056,8 +2070,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Melquiades Claure Gonzales",
     "municipio": "CHIMORÉ",
@@ -2070,8 +2084,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Juan Limberth Andia",
     "municipio": "CLIZA",
@@ -2084,8 +2098,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Gabriel Riva Carrillo",
     "municipio": "COCAPATA",
@@ -2098,8 +2112,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "SUMATE",
     "nombre": "Manfred Armando Antonio Reyes Villa",
     "municipio": "COCHABAMBA",
@@ -2112,8 +2126,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "CC",
     "nombre": "José Nelson Gallinate Torrico",
     "municipio": "COLCAPIRHUA",
@@ -2126,8 +2140,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Félix Veizaga Zurita",
     "municipio": "COLOMI",
@@ -2140,8 +2154,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Elmer Rojas Mercado",
     "municipio": "ENTRE RÍOS",
@@ -2154,8 +2168,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Pedro Quiroz Coria",
     "municipio": "INDEPENDENCIA",
@@ -2168,8 +2182,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Fernando Álvarez Castro",
     "municipio": "MIZQUE",
@@ -2182,8 +2196,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ramiro Mamani Escalera",
     "municipio": "MOROCHATA",
@@ -2196,8 +2210,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Darwin Vera",
     "municipio": "OMEREQUE",
@@ -2210,8 +2224,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ismael Ríos Castro",
     "municipio": "PASORAPA",
@@ -2224,8 +2238,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Mario Rojas Gonzales",
     "municipio": "POCONA",
@@ -2238,8 +2252,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Cesar Coria Castellón",
     "municipio": "POJO",
@@ -2252,8 +2266,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Limber Cossío Arnéz",
     "municipio": "PUERTO VILLARROEL",
@@ -2266,8 +2280,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jaime Esteban Zeballos Vargas",
     "municipio": "PUNATA",
@@ -2280,8 +2294,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "UNE",
     "nombre": "Héctor Cartagena Chacón",
     "municipio": "QUILLACOLLO",
@@ -2294,8 +2308,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Pedro Gutierrez Vidaurre",
     "municipio": "SACABA",
@@ -2308,8 +2322,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "José Luis Roque Rodríguez",
     "municipio": "SACABAMBA",
@@ -2322,8 +2336,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jose Jhamil Rodríguez Claros",
     "municipio": "SAN BENITO (VILLA JOSÉ QUINTIN MENDOZA)",
@@ -2336,8 +2350,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcial Encinas Medrano",
     "municipio": "SANTIVÁÑEZ",
@@ -2350,8 +2364,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Luis Arce Clemente",
     "municipio": "SHINAHOTA",
@@ -2364,8 +2378,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juvenal Colque Valencia",
     "municipio": "SICAYA",
@@ -2378,8 +2392,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Félix Mario Galarza Ala",
     "municipio": "SIPESIPE",
@@ -2392,8 +2406,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "FPV",
     "nombre": "Neil Galvez Zurita",
     "municipio": "TACACHI",
@@ -2406,8 +2420,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Víctor Tola Ramos",
     "municipio": "TACOPAYA",
@@ -2420,8 +2434,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Bernardo Mamani Choque",
     "municipio": "TAPACARÍ",
@@ -2434,8 +2448,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Daniel Fernando Vallejo Vargas",
     "municipio": "TARATA",
@@ -2448,8 +2462,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Pahuasi Argote",
     "municipio": "TIQUIPAYA",
@@ -2462,8 +2476,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Adolfo Mérida Duran",
     "municipio": "TIRAQUE",
@@ -2476,8 +2490,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Saúl Rodríguez Camacho",
     "municipio": "TOCO",
@@ -2490,8 +2504,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ariel Vargas Revollo",
     "municipio": "TOLATA",
@@ -2504,8 +2518,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jhony Cuchallo Orellana",
     "municipio": "TOTORA",
@@ -2518,8 +2532,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Edwin Coca Guarachi",
     "municipio": "VACAS",
@@ -2532,8 +2546,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Siles Pozo",
     "municipio": "VILA VILA",
@@ -2546,8 +2560,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Alan Gálvez",
     "municipio": "VILLA GUALBERTO VILLARROEL",
@@ -2560,8 +2574,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "JESUCA",
     "nombre": "Ariel Rodrigo Maldonado Almendras",
     "municipio": "VILLA RIVERO",
@@ -2574,8 +2588,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Segundina Orellana Orellana",
     "municipio": "VILLA TUNARI",
@@ -2588,8 +2602,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Alfredo Lucana Ramos",
     "municipio": "VINTO",
@@ -2602,8 +2616,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "3"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Julián Sasa Quispe",
     "municipio": "ACASIO",
@@ -2616,8 +2630,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Epifanio Taraño Cuisara",
     "municipio": "ARAMPAMPA",
@@ -2630,8 +2644,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juaquin Milton Chiri Yanqui",
     "municipio": "ATOCHA",
@@ -2644,8 +2658,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Julio Arturo Caba Quicho",
     "municipio": "BETANZOS",
@@ -2658,8 +2672,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Braulio Garnica Mamani",
     "municipio": "CAIZA D",
@@ -2672,8 +2686,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Paulina Pérez Tola",
     "municipio": "CARIPUYO",
@@ -2686,8 +2700,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Roberto Sánchez Morales",
     "municipio": "CHAQUI",
@@ -2700,8 +2714,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Mauro Alfeo Condori Juchasara",
     "municipio": "CHAYANTA",
@@ -2714,8 +2728,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Edgar Villca Cayo",
     "municipio": "CHUQUIHUTA AYLLU JUCUMANI",
@@ -2728,8 +2742,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Simón Mamani Choque",
     "municipio": "CKOCHAS",
@@ -2742,8 +2756,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Cesar Ali Lupa",
     "municipio": "COLCHA K (VILLA MARTÍN)",
@@ -2756,8 +2770,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Rubén Zenobio León Flores",
     "municipio": "COLQUECHACA",
@@ -2770,8 +2784,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Daniel Llanos",
     "municipio": "COTAGAITA",
@@ -2784,8 +2798,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Adalid Jorge Aguilar",
     "municipio": "LLALLAGUA",
@@ -2798,8 +2812,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MOP",
     "nombre": "Fausto García López",
     "municipio": "LLICA",
@@ -2812,8 +2826,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Martin Mamani Zotar",
     "municipio": "MOJINETE",
@@ -2826,8 +2840,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Walter Mamani Sánchez",
     "municipio": "OCURÍ",
@@ -2840,8 +2854,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Bladimir Tumiri Cocha",
     "municipio": "POCOATA",
@@ -2854,8 +2868,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "PUKA SUNKU",
     "nombre": "Rene Huanaco Mamani",
     "municipio": "PORCO",
@@ -2868,8 +2882,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MCP",
     "nombre": "Jessica Mayra Churata Huanca",
     "municipio": "POTOSÍ",
@@ -2882,8 +2896,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Casto Alfonsín Condori Quispe",
     "municipio": "PUNA",
@@ -2896,8 +2910,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcelino Flores Choque",
     "municipio": "RAVELO",
@@ -2910,8 +2924,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juvenal Choque Ramírez",
     "municipio": "SACACA",
@@ -2924,8 +2938,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ronald Juvencio Calcina Cruz",
     "municipio": "SAN AGUSTÍN",
@@ -2938,8 +2952,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ernesto Quispe Mamani",
     "municipio": "SAN ANTONIO DE ESMORUCO",
@@ -2952,8 +2966,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "AS",
     "nombre": "Víctor Paucar Porco",
     "municipio": "SAN PABLO DE LÍPEZ",
@@ -2966,8 +2980,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Eliseo Juchatoma Espinoza",
     "municipio": "SAN PEDRO DE BUENA VISTA",
@@ -2980,8 +2994,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Agustín Irasabal Caisena",
     "municipio": "SAN PEDRO DE MACHA",
@@ -2994,8 +3008,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Huber Orlando Quispe Veliz",
     "municipio": "SAN PEDRO DE QUEMES",
@@ -3008,8 +3022,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Alberto Gallardo Martínez",
     "municipio": "TACOBAMBA",
@@ -3022,8 +3036,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcial Yucra Mendo",
     "municipio": "TINGUIPAYA",
@@ -3036,8 +3050,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Placido Choque Mamani",
     "municipio": "TOMAVE",
@@ -3050,8 +3064,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Hernán Jesús Colque Mendoza",
     "municipio": "TORO TORO",
@@ -3064,8 +3078,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jesús Reynaldo Guzmán Ortega",
     "municipio": "TUPIZA",
@@ -3078,8 +3092,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "AS",
     "nombre": "Zenón Yucra Checa",
     "municipio": "UNCÍA",
@@ -3092,8 +3106,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Martin Quispe Mamani",
     "municipio": "URMIRI",
@@ -3106,8 +3120,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Eusebio López Martínez",
     "municipio": "UYUNI",
@@ -3120,8 +3134,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Navia Llanos",
     "municipio": "VILLAZÓN",
@@ -3134,8 +3148,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Silverio Donaire Ojeda",
     "municipio": "VITICHI",
@@ -3148,8 +3162,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "David Chura García",
     "municipio": "YOCALLA",
@@ -3162,8 +3176,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "4"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Bonny Alberto Tito Cari",
     "municipio": "ANDAMARCA (SANTIAGO DE ANDAMARCA)",
@@ -3176,8 +3190,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Carlos Johnni Vargas Hurtado",
     "municipio": "ANTEQUERA",
@@ -3190,8 +3204,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Oscar Anagua Quispe",
     "municipio": "BELÉN DE ANDAMARCA",
@@ -3204,8 +3218,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Justo Ventura Guarayo",
     "municipio": "CARACOLLO",
@@ -3218,8 +3232,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Celestino Fernando Viza Viza",
     "municipio": "CARANGAS",
@@ -3232,8 +3246,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcos Choqueticlla Tito",
     "municipio": "CHALLAPATA",
@@ -3246,8 +3260,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "David Ramírez Chocata",
     "municipio": "CHOQUECOTA",
@@ -3260,8 +3274,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "PP",
     "nombre": "Ismael Pérez Atora",
     "municipio": "COIPASA",
@@ -3274,8 +3288,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "APU",
     "nombre": "Félix Mamani Fernández",
     "municipio": "CORQUE",
@@ -3288,8 +3302,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Santos Saúl Flores Copa",
     "municipio": "CRUZ DE MACHACAMARCA",
@@ -3302,8 +3316,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Grover Mariano Choque Calle",
     "municipio": "CURAHUARA DE CARANGAS",
@@ -3316,8 +3330,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Casto Chirilla Chambi",
     "municipio": "EL CHORO",
@@ -3330,8 +3344,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Kennedy Condori Flores",
     "municipio": "ESCARA",
@@ -3344,8 +3358,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "PP",
     "nombre": "Max Challapa Choque",
     "municipio": "ESMERALDA",
@@ -3358,8 +3372,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Julio Freddy Cuba Ramírez",
     "municipio": "EUCALIPTUS",
@@ -3372,8 +3386,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ivan Rodríguez Mamani",
     "municipio": "HUACHACALLA",
@@ -3386,8 +3400,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Ever Colque Yucra",
     "municipio": "HUANUNI",
@@ -3400,8 +3414,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Augusto Condori Gómez",
     "municipio": "HUAYLLAMARCA SANTIAGO DE HUAYLLAMARCA",
@@ -3414,8 +3428,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Sabino Ramírez Fernández",
     "municipio": "LA RIVERA",
@@ -3428,8 +3442,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "BST",
     "nombre": "Serafín Escobar Quispe",
     "municipio": "MACHACAMARCA",
@@ -3442,8 +3456,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Adhemar Wilcarani Morales",
     "municipio": "ORURO",
@@ -3456,8 +3470,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Florencio Condo Cari",
     "municipio": "PAMPA AULLAGAS",
@@ -3470,8 +3484,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Martin Sabino Quispe Alarcón",
     "municipio": "PAZÑA",
@@ -3484,8 +3498,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Florian Condori Choque",
     "municipio": "POOPÓ (VILLA POOPÓ)",
@@ -3498,8 +3512,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Sandro Valentín Flores Atora",
     "municipio": "SABAYA",
@@ -3512,8 +3526,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Fernando Apolinar Sola Choque",
     "municipio": "SANTIAGO DE HUARI",
@@ -3526,8 +3540,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Milton Huayllas Ramos",
     "municipio": "SANTIAGO DE QUILLACAS",
@@ -3540,8 +3554,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Rogelio Vallejos Mamani",
     "municipio": "SORACACHI",
@@ -3554,8 +3568,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcos Miranda Mamani",
     "municipio": "TODOS SANTOS",
@@ -3568,8 +3582,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "María Estela Ayma Paco",
     "municipio": "TOLEDO",
@@ -3582,8 +3596,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcos Lorenzo Canaviri Quispe",
     "municipio": "TOTORA",
@@ -3596,8 +3610,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jonás Benigno Mollo Viza",
     "municipio": "TURCO",
@@ -3610,8 +3624,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Fanor Capuma Condori",
     "municipio": "YUNGUYO DEL LITORAL",
@@ -3624,8 +3638,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "5"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Dorfio Mansilla Avendaño",
     "municipio": "CAMARGO",
@@ -3638,8 +3652,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Armando Tito Cruz Choque",
     "municipio": "CAMATAQUI (VILLA ABECIA)",
@@ -3652,8 +3666,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Víctor Gallardo Rivera",
     "municipio": "CULPINA",
@@ -3666,8 +3680,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcial Cruz León",
     "municipio": "EL VILLAR",
@@ -3680,8 +3694,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ariel Galarza Silva",
     "municipio": "ICLA",
@@ -3694,8 +3708,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Florencio Ortega Duran",
     "municipio": "INCAHUASI",
@@ -3708,8 +3722,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Cimar Ramiro Rodríguez Narváez",
     "municipio": "LAS CARRERAS",
@@ -3722,8 +3736,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Andrés Flores Serrudo",
     "municipio": "MACHARETI",
@@ -3736,8 +3750,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Adhemar Carvajal Ruiz",
     "municipio": "MONTEAGUDO",
@@ -3750,8 +3764,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "Constancio Salazar Padilla",
     "municipio": "PADILLA",
@@ -3764,8 +3778,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Felipe Mamani Villca",
     "municipio": "POROMA",
@@ -3778,8 +3792,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Jaime Roque Castro",
     "municipio": "PRESTO",
@@ -3792,8 +3806,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Efraín Puma Villca",
     "municipio": "SAN LUCAS",
@@ -3806,8 +3820,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "R-2025",
     "nombre": "Alfredo Fuentes Mariscal",
     "municipio": "SAN PABLO DE HUACARETA",
@@ -3820,8 +3834,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Marcos Telles Torres",
     "municipio": "SOPACHUY",
@@ -3834,8 +3848,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Enrique Leaño Palenque",
     "municipio": "SUCRE",
@@ -3848,8 +3862,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Ariel Siles Céspedes",
     "municipio": "TARABUCO",
@@ -3862,8 +3876,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "CST",
     "nombre": "Santos Simón Vicente Corma",
     "municipio": "TARVITA",
@@ -3876,8 +3890,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "José Cardozo Mamani",
     "municipio": "TOMINA",
@@ -3890,8 +3904,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "Oscar Gonzalo Salazar Villarroel",
     "municipio": "VILLA ALCALÁ",
@@ -3904,8 +3918,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Griseldo Martínez Cruz",
     "municipio": "VILLA AZURDUY",
@@ -3918,8 +3932,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Juan Martínez Soruco",
     "municipio": "VILLA CHARCAS",
@@ -3932,8 +3946,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Walter Cervantes Sanamare",
     "municipio": "VILLA DE HUACAYA",
@@ -3946,8 +3960,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "José Cardozo Mamani",
     "municipio": "VILLA MOJOCOYA",
@@ -3960,8 +3974,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "CST",
     "nombre": "Lorenzo Galarza Benavides",
     "municipio": "VILLA SERRANO",
@@ -3974,8 +3988,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "German Romeo Herrera Barja",
     "municipio": "VILLA VACA GUZMÁN",
@@ -3988,8 +4002,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Crescencio Barriga Santillán",
     "municipio": "VILLA ZUDAÑEZ (TACOPAYA)",
@@ -4002,8 +4016,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Alejandro Cabezas Yucra",
     "municipio": "YAMPARAEZ",
@@ -4016,8 +4030,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Sabino Albarracín Zarate",
     "municipio": "YOTALA",
@@ -4030,8 +4044,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "6"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Roberto Eduardo Ayllón Castedo",
     "municipio": "BAURES",
@@ -4044,8 +4058,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Gonzalo Alfonso Hurtado Toro",
     "municipio": "EXALTACIÓN",
@@ -4058,8 +4072,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "TODOS",
     "nombre": "Everty Orihuela Mercado",
     "municipio": "HUARACAJE",
@@ -4072,8 +4086,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Yascara Moreno Flores",
     "municipio": "LORETO",
@@ -4086,8 +4100,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "TODOS",
     "nombre": "Jorge Donny Chávez Suarez",
     "municipio": "MAGDALENA",
@@ -4100,8 +4114,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ángel Freddy Maimura Reina",
     "municipio": "PUERTO GUAYARAMERÍN",
@@ -4114,8 +4128,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS",
     "nombre": "Elías Moreno Vargas",
     "municipio": "PUERTO RURRENABAQUE",
@@ -4128,8 +4142,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "TODOS",
     "nombre": "Darwin Perrogon Rodríguez",
     "municipio": "PUERTO SILES",
@@ -4142,8 +4156,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "UNEBENI",
     "nombre": "Mercedes Molina Vásquez",
     "municipio": "REYES",
@@ -4156,8 +4170,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "NACER",
     "nombre": "Ciriaco Rodríguez Vásquez",
     "municipio": "RIBERALTA",
@@ -4170,8 +4184,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Eber Rudy Vásquez Mamani",
     "municipio": "SAN ANDRÉS",
@@ -4184,8 +4198,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "TODOS",
     "nombre": "Walter Ronal Tovias Simón",
     "municipio": "SAN BORJA",
@@ -4198,8 +4212,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "TODOS",
     "nombre": "Juan Carlos Abularach Suarez",
     "municipio": "SAN IGNACIO",
@@ -4212,8 +4226,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "SOMOS",
     "nombre": "Cristian Roberto Velasco Añez",
     "municipio": "SAN JAVIER",
@@ -4226,8 +4240,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Carmen Eris Lima Lobo Dorado",
     "municipio": "SAN JOAQUÍN",
@@ -4240,8 +4254,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Estela Rodríguez Siles",
     "municipio": "SAN RAMÓN",
@@ -4254,8 +4268,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Roció Roca Roca",
     "municipio": "SANTA ANA",
@@ -4268,8 +4282,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Javier Nogales Jaime",
     "municipio": "SANTA ROSA",
@@ -4282,8 +4296,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Cristhian Miguel Cámara Arratia",
     "municipio": "TRINIDAD",
@@ -4296,8 +4310,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "7"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Gary Verner Von Boeck Gomez",
     "municipio": "BELLA FLOR",
@@ -4310,8 +4324,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Moises Macuapa Rodriguez",
     "municipio": "BOLPEBRA",
@@ -4324,8 +4338,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Ana Lucia Reis Melena",
     "municipio": "COBIJA",
@@ -4338,8 +4352,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Jaime Aguirre Dan",
     "municipio": "EL SENA",
@@ -4352,8 +4366,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Pedro Flores Cruz",
     "municipio": "FILADELFIA",
@@ -4366,8 +4380,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Edmundo Roca Salas",
     "municipio": "INGAVI (HUMAITA)",
@@ -4380,8 +4394,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Wilson Quiñones Ugarte",
     "municipio": "NUEVA ESPERANZA",
@@ -4394,8 +4408,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MTS",
     "nombre": "Gresly Justiniano Duran",
     "municipio": "PORVENIR",
@@ -4408,8 +4422,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Gabriela Jiménez Vaca",
     "municipio": "PUERTO GONZALO MORENO",
@@ -4422,8 +4436,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "CID",
     "nombre": "Yordy Enrrique Leverenz López",
     "municipio": "PUERTO RICO",
@@ -4436,8 +4450,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Eduardo Flores Queteguari",
     "municipio": "SAN LORENZO",
@@ -4450,8 +4464,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "CID",
     "nombre": "Franklin Aguirre Téllez",
     "municipio": "SAN PEDRO",
@@ -4464,8 +4478,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Abner Beltrán Fernández",
     "municipio": "SANTA ROSA DEL ABUNÁ",
@@ -4478,8 +4492,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "CID",
     "nombre": "Samuel Heredia Chipunavi",
     "municipio": "SANTOS MERCADO",
@@ -4492,8 +4506,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "PASO",
     "nombre": "Marcelo Tuchani Amutari",
     "municipio": "VILLA NUEVA (LOMA ALTA)",
@@ -4506,8 +4520,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "8"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Irineo Flores Martínez",
     "municipio": "BERMEJO",
@@ -4520,8 +4534,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Ermas Pérez Villalba",
     "municipio": "CARAPARI",
@@ -4534,8 +4548,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS-IPSP",
     "nombre": "Sara Armella Rueda",
     "municipio": "EL PUENTE",
@@ -4548,8 +4562,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS POR TARIJA",
     "nombre": "Teodoro Suruguay Quiroga",
     "municipio": "ENTRE RÍOS",
@@ -4562,8 +4576,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Willams Joel Guerrero Quiroga",
     "municipio": "PADCAYA",
@@ -4576,8 +4590,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Asunción Ramos",
     "municipio": "SAN LORENZO",
@@ -4590,8 +4604,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS POR TARIJA",
     "nombre": "Johnny Marcel Torrez Terzo",
     "municipio": "TARIJA",
@@ -4604,8 +4618,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "UNIDOS POR TARIJA",
     "nombre": "Javier Abraham Lazcano Quiroga",
     "municipio": "URIONDO (CONCEPCIÓN)",
@@ -4618,8 +4632,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Rubén Walter Vaca Salazar",
     "municipio": "VILLA MONTES",
@@ -4632,8 +4646,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Carlos Eduardo Bru Cavero",
     "municipio": "YACUIBA",
@@ -4646,8 +4660,8 @@
     "tipo_miembro": "ALCALDE",
     "estado": "activo",
     "id_asociacion": "9"
-    },
-    {
+  },
+  {
     "alias": "MAS IPSP",
     "nombre": "Agustín Casazola Fernández",
     "municipio": "YUNCHARÁ",

@@ -3,55 +3,20 @@ import 'package:fam_intento1/widgets/gradient_scaffold.dart';
 import 'package:fam_intento1/pantallas/buscar.dart';
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/text.dart'; // tus estilos de texto
-import 'package:fam_intento1/services/auth_service.dart';
-import 'package:fam_intento1/pantallas/login.dart';
 import 'package:fam_intento1/pantallas/asociaciones.dart';
-import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
 
 class PantallaInicio extends StatelessWidget {
   const PantallaInicio({super.key});
-
-  Future<void> _logout(BuildContext context) async {
-    await AuthService.logout();
-    if (context.mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF135685),
-      // App Bar transparente para botones de navegación (Login/Dashboard/Cerrar Sesión)
+      // App Bar transparente para mantener el padding superior, pero sin botones de sesión
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          if (AuthService.isLoggedIn && (AuthService.user?['role'] == 'admin' || AuthService.user?['role'] == 'fam'))
-            TextButton.icon(
-              icon: const Icon(Icons.dashboard, color: Colors.white),
-              label: const Text('Dashboard', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardScreen())),
-            ),
-          if (!AuthService.isLoggedIn || AuthService.isGuest)
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: TextButton.icon(
-                icon: const Icon(Icons.login, size: 18, color: Colors.white),
-                label: const Text('Iniciar Sesión', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
-              ),
-            ),
-          if (AuthService.isLoggedIn && !AuthService.isGuest)
-            IconButton(
-              icon: const Icon(Icons.logout, color: Colors.redAccent),
-              onPressed: () => _logout(context),
-              tooltip: 'Cerrar sesión',
-            ),
-        ],
+        actions: [],
       ),
       body: SafeArea(
         child: Column(

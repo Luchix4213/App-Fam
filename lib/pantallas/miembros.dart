@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
-import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/services/sync_service.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -52,7 +51,11 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
   }
 
   void _onDataUpdated() {
-    if (mounted) {
+    print("SYNC EVENT TRIGGERED");
+
+    if (!mounted) return;
+
+    if (_miembros.isEmpty) {
       _loadMiembros(forceLocalOnly: true);
     }
   }
@@ -61,9 +64,10 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     final query = _searchCtrl.text.toLowerCase();
     setState(() {
       _filteredMiembros = _miembros.where((m) {
-        final nombre = (m['nombre'] ?? '').toLowerCase();
-        final alias = (m['alias'] ?? '').toLowerCase();
-        final municipio = (m['municipio'] ?? '').toLowerCase();
+        // Agregamos .toString() por si algún dato del JSON llega como número
+        final nombre = (m['nombre']?.toString() ?? '').toLowerCase();
+        final alias = (m['alias']?.toString() ?? '').toLowerCase();
+        final municipio = (m['municipio']?.toString() ?? '').toLowerCase();
         return nombre.contains(query) || alias.contains(query) || municipio.contains(query);
       }).toList();
     });
@@ -73,6 +77,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     // 1. Cargar datos locales inmediatamente
     try {
       final localData = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
+      print("LOCAL DATA LENGTH: ${localData.length}");
       if (localData.isNotEmpty) {
         if (mounted) {
           setState(() {
@@ -81,8 +86,12 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
           });
         }
       } else {
-        if (mounted) {
-          setState(() { _isLoading = true; _errorMessage = null; });
+        // Si ya hay datos cargados no los borres
+        if (_miembros.isEmpty && mounted) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = "No se encontraron miembros.";
+          });
         }
       }
     } catch (e) {
@@ -90,33 +99,48 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     }
 
     // 2. Intentar actualizar en background desde la API
+    // 2. Intentar actualizar en background desde la API
     if (!forceLocalOnly) {
       try {
         final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
         if (res['success'] == true) {
-          final List<dynamic> data = res['data'];
+          final List<dynamic> data = res['data'] ?? [];
           
-          // Sanitizar y guardar en SQLite
-          List<Map<String, dynamic>> miemClean = data.map((item) {
-            Map<String, dynamic> map = Map<String, dynamic>.from(item);
-            map.removeWhere((key, value) => value is Map || value is List);
-            return map;
-          }).toList();
+          print("API DATA LENGTH: ${data.length}"); // Agregado para que veas en terminal si llega a 0
 
-          await DatabaseHelper.instance.syncMinistros(miemClean);
-          
-          // Actualizamos UI solo si seguimos en pantalla
-          if (mounted) {
-            setState(() {
-              _procesarListaMiembros(data);
-              _filter();
-              _isLoading = false;
-              _errorMessage = null;
-            });
+          // SOLUCIÓN: Solo actualizamos y sobreescribimos si la API trajo datos
+          if (data.isNotEmpty) {
+            // Sanitizar y guardar en SQLite
+            List<Map<String, dynamic>> miemClean = data.map((item) {
+              Map<String, dynamic> map = Map<String, dynamic>.from(item);
+              map.removeWhere((key, value) => value is Map || value is List);
+              return map;
+            }).toList();
+
+            await DatabaseHelper.instance.syncMinistros(miemClean);
+            
+            // Actualizamos UI
+            if (mounted) {
+              setState(() {
+                _procesarListaMiembros(data);
+                _filter();
+                _isLoading = false;
+                _errorMessage = null;
+              });
+            }
+          } else {
+            // Si la API devolvió vacío, NO borramos los datos locales de la pantalla.
+            // Solo apagamos el indicador de carga.
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+            print("Advertencia: La API respondió con éxito pero devolvió 0 miembros.");
           }
         }
       } catch (apiError) {
-        print("Background Fetch Error: \$apiError.");
+        print("Background Fetch Error: $apiError");
         if (mounted && _miembros.isEmpty) {
           setState(() {
             _isLoading = false;
