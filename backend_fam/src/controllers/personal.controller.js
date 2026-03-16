@@ -1,5 +1,4 @@
 import { Personal } from "../models/index.js";
-import { Op } from "sequelize";
 import { uploadStream, deleteImage } from "../config/cloudinary.config.js";
 
 const deleteOldImage = async (imagePath) => {
@@ -34,13 +33,10 @@ export const createPersonal = async (req, res) => {
 
 export const listPersonal = async (req, res) => {
     try {
-        const { estado, updated_after } = req.query;
+        const { estado } = req.query;
         const where = {};
         if (estado !== 'todos') {
             where.estado = estado || 'activo';
-        }
-        if (updated_after) {
-            where.updatedAt = { [Op.gt]: new Date(updated_after) };
         }
 
         const items = await Personal.findAll({

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/sync_service.dart';
-import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,47 +18,22 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initApp() async {
-    bool hasLocalData = false;
+    // Sincronizar datos silenciosamente desde la API
     try {
-      // 1. Consulta rápida a SQLite
-      final asocLocales = await DatabaseHelper.instance.getAllAsociaciones();
-      if (asocLocales.isNotEmpty) {
-        hasLocalData = true;
-      }
+      await SyncService.syncAll();
     } catch (e) {
-      debugPrint("Error leyendo SQLite en Splash: $e");
+      debugPrint("Error sync al inicio: $e");
     }
 
-    if (hasLocalData) {
-      // SI HAY DATOS: Splash rápido (1.2 segundos por estética)
-      await Future.delayed(const Duration(milliseconds: 1200));
+    // Mostrar splash brevemente
+    await Future.delayed(const Duration(seconds: 2));
 
-      // Disparar sincronización DE FONDO, sin hacer 'await' para no colgar el UI
-      SyncService.syncAll().catchError((e) => debugPrint("Error sync de fondo: $e"));
-
-      // Ir directo a la app
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const PublicMainScreen()),
-        );
-      }
-    } else {
-      // SI NO HAY DATOS (Primera instalación): Obligamos a esperar
-      try {
-        await SyncService.syncAll();
-      } catch (e) {
-        debugPrint("Error sync primera vez: $e");
-      }
-
-      await Future.delayed(const Duration(seconds: 1));
-
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const PublicMainScreen()),
-        );
-      }
+    // Ir directo a la app pública
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const PublicMainScreen()),
+      );
     }
   }
 
