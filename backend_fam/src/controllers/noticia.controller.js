@@ -1,4 +1,5 @@
 import { Noticia } from "../models/index.js";
+import { Op } from "sequelize";
 import { uploadStream, deleteImage } from "../config/cloudinary.config.js";
 
 const deleteOldImage = async (imagePath) => {
@@ -30,10 +31,14 @@ export const createNoticia = async (req, res) => {
 
 export const listNoticias = async (req, res) => {
     try {
-        const { activa } = req.query;
+        const { activa, updated_after } = req.query;
         const where = {};
         if (activa === 'true') where.activa = true;
         else if (activa === 'false') where.activa = false;
+
+        if (updated_after) {
+            where.updatedAt = { [Op.gt]: new Date(updated_after) };
+        }
 
         const items = await Noticia.findAll({
             where: where,
