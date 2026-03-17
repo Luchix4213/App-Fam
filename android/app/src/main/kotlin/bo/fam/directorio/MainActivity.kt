@@ -1,4 +1,4 @@
-package com.example.fam_intento1
+package bo.fam.directorio
 
 import io.flutter.embedding.android.FlutterActivity
 
