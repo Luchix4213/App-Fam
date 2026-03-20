@@ -99,14 +99,13 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     }
 
     // 2. Intentar actualizar en background desde la API
-    // 2. Intentar actualizar en background desde la API
     if (!forceLocalOnly) {
       try {
         final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
         if (res['success'] == true) {
           final List<dynamic> data = res['data'] ?? [];
           
-          print("API DATA LENGTH: ${data.length}"); // Agregado para que veas en terminal si llega a 0
+          //print("API DATA LENGTH: ${data.length}"); // Agregado para que veas en terminal si llega a 0
 
           // SOLUCIÓN: Solo actualizamos y sobreescribimos si la API trajo datos
           if (data.isNotEmpty) {

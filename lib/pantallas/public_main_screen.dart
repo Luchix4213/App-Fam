@@ -7,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui';
-import 'dart:async'; // Para el Timer
-import 'package:fam_intento1/services/sync_service.dart';
 
 class PublicMainScreen extends StatefulWidget {
   const PublicMainScreen({super.key});
@@ -19,7 +17,6 @@ class PublicMainScreen extends StatefulWidget {
 
 class _PublicMainScreenState extends State<PublicMainScreen> {
   int _currentIndex = 0;
-  Timer? _syncTimer;
 
   final List<Widget> _screens = [
     const PantallaInicio(), // Tab 0: Inicio
@@ -33,16 +30,10 @@ class _PublicMainScreenState extends State<PublicMainScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowNoticias();
     });
-    
-    // Iniciar el temporizador espía para sincronizar cada 5 minutos
-    _syncTimer = Timer.periodic(const Duration(minutes: 2), (timer) {
-      SyncService.syncAll();
-    });
   }
 
   @override
   void dispose() {
-    _syncTimer?.cancel();
     super.dispose();
   }
 

@@ -11,7 +11,7 @@ const NoticiasList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
@@ -23,13 +23,14 @@ const NoticiasList = () => {
 
     useEffect(() => {
         let list = data;
-        if (!showInactive) list = list.filter(n => n.activa !== false && n.activa !== 'false');
+        if (filterEstado === 'activo') list = list.filter(n => n.activa !== false && n.activa !== 'false');
+        if (filterEstado === 'inactivo') list = list.filter(n => n.activa === false || n.activa === 'false');
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(n => (n.titulo || '').toLowerCase().includes(q) || (n.descripcion || '').toLowerCase().includes(q));
         }
         setFiltered(list);
-    }, [data, search, showInactive]);
+    }, [data, search, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar esta noticia?')) return;
@@ -54,9 +55,12 @@ const NoticiasList = () => {
                     <input type="text" placeholder="Buscar por título o descripción..." value={search} onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition" />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded" /> Inactivas
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activas</option>
+                    <option value="inactivo">Solo Inactivas</option>
+                </select>
             </div>
 
             {loading ? (

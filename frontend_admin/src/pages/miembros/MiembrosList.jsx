@@ -13,7 +13,7 @@ const MiembrosList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
@@ -29,7 +29,8 @@ const MiembrosList = () => {
 
     useEffect(() => {
         let list = data;
-        if (!showInactive) list = list.filter(m => m.estado !== 'inactivo');
+        if (filterEstado === 'activo') list = list.filter(m => m.estado !== 'inactivo');
+        if (filterEstado === 'inactivo') list = list.filter(m => m.estado === 'inactivo');
         if (filterAsoc) list = list.filter(m => String(m.id_asociacion) === filterAsoc);
         if (search) {
             const q = search.toLowerCase();
@@ -40,7 +41,7 @@ const MiembrosList = () => {
             );
         }
         setFiltered(list);
-    }, [data, search, filterAsoc, showInactive]);
+    }, [data, search, filterAsoc, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este miembro?')) return;
@@ -78,10 +79,12 @@ const MiembrosList = () => {
                     <option value="">Todas las asociaciones</option>
                     {asociaciones.filter(a => a.estado !== 'inactivo').map(a => <option key={a.id} value={a.id}>{a.alias || a.nombre}</option>)}
                 </select>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none whitespace-nowrap">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded text-teal-500 focus:ring-teal-500" />
-                    Inactivos
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
             </div>
 
             {/* Table */}

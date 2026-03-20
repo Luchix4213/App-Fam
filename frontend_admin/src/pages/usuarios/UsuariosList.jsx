@@ -9,7 +9,7 @@ const UsuariosList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
@@ -21,13 +21,14 @@ const UsuariosList = () => {
 
     useEffect(() => {
         let list = data;
-        if (!showInactive) list = list.filter(u => u.estado !== 'inactivo');
+        if (filterEstado === 'activo') list = list.filter(u => u.estado !== 'inactivo');
+        if (filterEstado === 'inactivo') list = list.filter(u => u.estado === 'inactivo');
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
         }
         setFiltered(list);
-    }, [data, search, showInactive]);
+    }, [data, search, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este usuario?')) return;
@@ -58,9 +59,12 @@ const UsuariosList = () => {
                     <input type="text" placeholder="Buscar por nombre o email..." value={search} onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition" />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded" /> Inactivos
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
             </div>
 
             {loading ? (
