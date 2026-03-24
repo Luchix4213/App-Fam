@@ -34,7 +34,7 @@ const PersonalList = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este personal?')) return;
-        try { await api.delete(`/personal/${id}`); fetchData(); } catch (e) { alert('Error'); }
+        try { await api.put(`/personal/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
     const handleReactivate = async (id) => {
         try { await api.put(`/personal/${id}`, { estado: 'activo' }); fetchData(); } catch (e) { alert('Error'); }

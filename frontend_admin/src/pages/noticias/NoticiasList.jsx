@@ -34,7 +34,7 @@ const NoticiasList = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar esta noticia?')) return;
-        try { await api.delete(`/noticias/${id}`); fetchData(); } catch (e) { alert('Error'); }
+        try { await api.put(`/noticias/${id}`, { activa: false }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
     const handleReactivate = async (id) => {
         try { await api.put(`/noticias/${id}`, { activa: true }); fetchData(); } catch (e) { alert('Error'); }

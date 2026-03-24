@@ -32,7 +32,7 @@ const UsuariosList = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este usuario?')) return;
-        try { await api.delete(`/users/${id}`); fetchData(); } catch (e) { alert('Error'); }
+        try { await api.put(`/usuarios/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
     const handleReactivate = async (id) => {
         try { await api.put(`/users/${id}`, { estado: 'activo' }); fetchData(); } catch (e) { alert('Error'); }

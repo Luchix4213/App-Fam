@@ -38,7 +38,7 @@ const AsociacionesList = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar esta asociación?')) return;
-        try { await api.delete(`/asociaciones/${id}`); fetchData(); } catch (e) { alert('Error al eliminar'); }
+        try { await api.put(`/asociaciones/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
 
     const handleReactivate = async (id) => {

@@ -45,7 +45,7 @@ const MiembrosList = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este miembro?')) return;
-        try { await api.delete(`/miembros/${id}`); fetchData(); } catch (e) { alert('Error al eliminar'); }
+        try { await api.put(`/miembros/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
 
     const handleReactivate = async (id) => {
