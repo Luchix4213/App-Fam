@@ -100,8 +100,8 @@ const AsociacionesList = () => {
                                     <tr key={a.id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                {a.logo ? (
-                                                    <img src={a.logo.startsWith('http') ? a.logo : `${API_BASE}${a.logo}`}
+                                                {a.foto ? (
+                                                    <img src={a.foto.startsWith('http') ? a.foto : `${API_BASE}${a.foto}`}
                                                         className="w-10 h-10 rounded-xl object-cover border border-slate-200" alt="" />
                                                 ) : (
                                                     <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
@@ -172,7 +172,7 @@ const AsociacionForm = ({ asociacion, onClose, onSaved }) => {
     const [alias, setAlias] = useState(asociacion?.alias || '');
     const [color, setColor] = useState(asociacion?.color || '#0ea5e9');
     const [imageFile, setImageFile] = useState(null);
-    const [preview, setPreview] = useState(asociacion?.logo ? (asociacion.logo.startsWith('http') ? asociacion.logo : `${API_BASE}${asociacion.logo}`) : null);
+    const [preview, setPreview] = useState(asociacion?.foto ? (asociacion.foto.startsWith('http') ? asociacion.foto : `${API_BASE}${asociacion.foto}`) : null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
