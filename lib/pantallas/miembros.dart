@@ -12,12 +12,14 @@ class MiembrosScreen extends StatefulWidget {
   final int asociacionId;
   final String asociacionNombre;
   final Color? asociacionColor;
+  final String? asociacionLogo;
 
   const MiembrosScreen({
     super.key,
     required this.asociacionId,
     required this.asociacionNombre,
     this.asociacionColor,
+    this.asociacionLogo,
   });
 
   @override
@@ -77,7 +79,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     // 1. Cargar datos locales inmediatamente
     try {
       final localData = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
-      print("LOCAL DATA LENGTH: ${localData.length}");
+      //print("LOCAL DATA LENGTH: ${localData.length}");
       if (localData.isNotEmpty) {
         if (mounted) {
           setState(() {
@@ -209,34 +211,68 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                       
                       // Contenido Central Header
                       Positioned.fill(
-                        top: 30,
+                        top: 25,
                         child: Column(
                           children: [
-                            const Text(
-                              "MIEMBROS",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2.0,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                widget.asociacionNombre.toUpperCase(),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.visible, // Permitir wrapping
+                            if (widget.asociacionLogo != null && widget.asociacionLogo!.isNotEmpty)
+                              Container(
+                                width: 90,
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.5),
+                                    width: 3,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.asociacionLogo!.startsWith('http') 
+                                        ? widget.asociacionLogo! 
+                                        : "${ApiService.baseUrl.replaceAll('/api', '')}${widget.asociacionLogo!}",
+                                    fit: BoxFit.contain,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: appColores.dashTealStart)
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(Icons.business, color: Colors.grey, size: 40),
+                                  ),
+                                ),
+                              )
+                            else ...[
+                              const Text(
+                                "MIEMBROS",
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.2,
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 2.0,
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  widget.asociacionNombre.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -495,13 +531,13 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
-                       color: appColores.badgePurpleLight,
+                       color: Color(0xFF6B6B66),
                        borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       miembro['tipo_miembro'].toString(),
                       style: const TextStyle(
-                        color: appColores.badgePurple,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12
                       ),

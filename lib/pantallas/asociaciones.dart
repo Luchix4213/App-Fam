@@ -431,6 +431,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                   asociacionId: asociacion['id'],
                   asociacionNombre: nombreAsoc,
                   asociacionColor: asociacionColor,
+                  asociacionLogo: asociacion['foto'],
                 ),
               ),
             );
