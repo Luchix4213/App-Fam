@@ -29,8 +29,8 @@ const MiembrosList = () => {
 
     useEffect(() => {
         let list = data;
-        if (filterEstado === 'activo') list = list.filter(m => m.estado !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(m => m.estado === 'inactivo');
+        if (filterEstado === 'activo') list = list.filter(m => !m.estado || String(m.estado).toLowerCase().trim() !== 'inactivo');
+        if (filterEstado === 'inactivo') list = list.filter(m => String(m.estado).toLowerCase().trim() === 'inactivo');
         if (filterAsoc) list = list.filter(m => String(m.id_asociacion) === filterAsoc);
         if (search) {
             const q = search.toLowerCase();
@@ -127,14 +127,14 @@ const MiembrosList = () => {
                                         <td className="p-4 text-sm text-slate-500">{getAsocName(m.id_asociacion)}</td>
                                         <td className="p-4"><span className="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-semibold">{m.tipo_miembro || '—'}</span></td>
                                         <td className="p-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${m.estado === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                                {m.estado === 'inactivo' ? 'Inactivo' : 'Activo'}
+                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${String(m.estado).toLowerCase().trim() === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                                                {String(m.estado).toLowerCase().trim() === 'inactivo' ? 'Inactivo' : 'Activo'}
                                             </span>
                                         </td>
                                         <td className="p-4">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button onClick={() => { setEditing(m); setShowForm(true); }} className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><Pencil size={16} /></button>
-                                                {m.estado === 'inactivo' ? (
+                                                {String(m.estado).toLowerCase().trim() === 'inactivo' ? (
                                                     <button onClick={() => handleReactivate(m.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
                                                 ) : (
                                                     <button onClick={() => handleDelete(m.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 size={16} /></button>

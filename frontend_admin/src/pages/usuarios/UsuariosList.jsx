@@ -21,8 +21,8 @@ const UsuariosList = () => {
 
     useEffect(() => {
         let list = data;
-        if (filterEstado === 'activo') list = list.filter(u => u.estado !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(u => u.estado === 'inactivo');
+        if (filterEstado === 'activo') list = list.filter(u => !u.estado || String(u.estado).toLowerCase().trim() !== 'inactivo');
+        if (filterEstado === 'inactivo') list = list.filter(u => String(u.estado).toLowerCase().trim() === 'inactivo');
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
@@ -93,10 +93,10 @@ const UsuariosList = () => {
                                         </td>
                                         <td className="p-4 text-sm text-slate-500">{u.email}</td>
                                         <td className="p-4">{roleBadge(u.role)}</td>
-                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${u.estado === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{u.estado === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
+                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${String(u.estado).toLowerCase().trim() === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{String(u.estado).toLowerCase().trim() === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
                                         <td className="p-4"><div className="flex items-center justify-end gap-2">
                                             <button onClick={() => { setEditing(u); setShowForm(true); }} className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><Pencil size={16} /></button>
-                                            {u.estado === 'inactivo' ? <button onClick={() => handleReactivate(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
+                                            {String(u.estado).toLowerCase().trim() === 'inactivo' ? <button onClick={() => handleReactivate(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
                                                 : <button onClick={() => handleDelete(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 size={16} /></button>}
                                         </div></td>
                                     </tr>
