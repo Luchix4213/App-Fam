@@ -16,19 +16,26 @@ const AsociacionesList = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/asociaciones');
+            let url = '/asociaciones';
+            if (filterEstado === 'activo') url = '/asociaciones?estado=activo';
+            if (filterEstado === 'inactivo') url = '/asociaciones?estado=inactivo';
+            const res = await api.get(url);
             const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setData(list);
         } catch (e) { console.error(e); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { fetchData(); }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (filterEstado === 'activo') list = list.filter(a => !a.estado || String(a.estado).toLowerCase().trim() !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(a => String(a.estado).toLowerCase().trim() === 'inactivo');
+        let list = [...data];
+        if (filterEstado === 'activo') {
+            list = list.filter(a => String(a.estado).toLowerCase().trim() === 'activo' || !a.estado);
+        }
+        if (filterEstado === 'inactivo') {
+            list = list.filter(a => String(a.estado).toLowerCase().trim() === 'inactivo');
+        }
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(a => (a.nombre || '').toLowerCase().includes(q) || (a.alias || '').toLowerCase().includes(q));

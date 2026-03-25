@@ -18,19 +18,30 @@ const MiembrosList = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [mRes, aRes] = await Promise.all([api.get('/miembros'), api.get('/asociaciones')]);
+            let url = '/miembros';
+            if (filterEstado === 'activo') {
+                url = '/miembros?estado=activo';
+            }
+            if (filterEstado === 'inactivo') {
+                url = '/miembros?estado=inactivo';
+            }
+            const [mRes, aRes] = await Promise.all([api.get(url), api.get('/asociaciones')]);
             setData(Array.isArray(mRes.data) ? mRes.data : (mRes.data?.data || []));
             setAsociaciones(Array.isArray(aRes.data) ? aRes.data : (aRes.data?.data || []));
         } catch (e) { console.error(e); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { fetchData(); }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (filterEstado === 'activo') list = list.filter(m => !m.estado || String(m.estado).toLowerCase().trim() !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(m => String(m.estado).toLowerCase().trim() === 'inactivo');
+        let list = [...data];
+        if (filterEstado === 'activo') {
+            list = list.filter(m => String(m.estado).toLowerCase().trim() === 'activo' || !m.estado);
+        }
+        if (filterEstado === 'inactivo') {
+            list = list.filter(m => String(m.estado).toLowerCase().trim() === 'inactivo');
+        }
         if (filterAsoc) list = list.filter(m => String(m.id_asociacion) === filterAsoc);
         if (search) {
             const q = search.toLowerCase();

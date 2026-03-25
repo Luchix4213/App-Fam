@@ -13,16 +13,26 @@ const UsuariosList = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        try { const res = await api.get('/users'); setData(Array.isArray(res.data) ? res.data : (res.data?.data || [])); } catch (e) { console.error(e); }
+        try {
+            let url = '/users';
+            if (filterEstado === 'activo') url = '/users?estado=activo';
+            if (filterEstado === 'inactivo') url = '/users?estado=inactivo';
+            const res = await api.get(url);
+            setData(Array.isArray(res.data) ? res.data : (res.data?.data || []));
+        } catch (e) { console.error(e); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { fetchData(); }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (filterEstado === 'activo') list = list.filter(u => !u.estado || String(u.estado).toLowerCase().trim() !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(u => String(u.estado).toLowerCase().trim() === 'inactivo');
+        let list = [...data];
+        if (filterEstado === 'activo') {
+            list = list.filter(u => String(u.estado).toLowerCase().trim() === 'activo' || !u.estado);
+        }
+        if (filterEstado === 'inactivo') {
+            list = list.filter(u => String(u.estado).toLowerCase().trim() === 'inactivo');
+        }
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
