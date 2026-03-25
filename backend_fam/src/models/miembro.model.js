@@ -47,7 +47,7 @@ const Miembro = sequelize.define(
       allowNull: true,
     },
     tipo_miembro: {
-      type: DataTypes.ENUM("ALCALDE", "CONCEJALA", "AMBES"),
+      type: DataTypes.ENUM("ALCALDE", "ALCALDESA", "CONCEJALA", "CONCEJAL", "ASAMBLEISTA", "OTRO"),
       allowNull: true,
     },
     estado: {
