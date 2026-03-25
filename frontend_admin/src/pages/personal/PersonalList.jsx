@@ -15,7 +15,26 @@ const PersonalList = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        try { const res = await api.get('/personal'); setData(Array.isArray(res.data) ? res.data : (res.data?.data || [])); } catch (e) { console.error(e); }
+        try {
+
+            let url = '/personal';
+
+            if (filterEstado === 'activo') {
+                url = '/personal?estado=activo';
+            }
+
+            if (filterEstado === 'inactivo') {
+                url = '/personal?estado=inactivo';
+            }
+
+            const res = await api.get(url);
+
+            setData(Array.isArray(res.data) ? res.data : (res.data?.data || []));
+
+        } catch (e) {
+            console.error(e);
+        }
+
         setLoading(false);
     };
 
