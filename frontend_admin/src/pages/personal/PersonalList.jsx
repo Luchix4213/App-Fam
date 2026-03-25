@@ -22,13 +22,24 @@ const PersonalList = () => {
     useEffect(() => { fetchData(); }, []);
 
     useEffect(() => {
-        let list = data;
-        if (filterEstado === 'activo') list = list.filter(p => !p.estado || String(p.estado).toLowerCase() !== 'inactivo');
-        if (filterEstado === 'inactivo') list = list.filter(p => String(p.estado).toLowerCase() === 'inactivo');
+        let list = [...data];
+
+        if (filterEstado === 'activo') {
+            list = list.filter(p => String(p.estado).toLowerCase() === 'activo');
+        }
+
+        if (filterEstado === 'inactivo') {
+            list = list.filter(p => String(p.estado).toLowerCase() === 'inactivo');
+        }
+
         if (search) {
             const q = search.toLowerCase();
-            list = list.filter(p => (p.nombre || '').toLowerCase().includes(q) || (p.cargo || '').toLowerCase().includes(q));
+            list = list.filter(p =>
+                (p.nombre || '').toLowerCase().includes(q) ||
+                (p.cargo || '').toLowerCase().includes(q)
+            );
         }
+
         setFiltered(list);
     }, [data, search, filterEstado]);
 
