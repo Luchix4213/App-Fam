@@ -38,7 +38,9 @@ const PersonalList = () => {
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => {
+        fetchData();
+    }, [filterEstado]);
 
     useEffect(() => {
         let list = [...data];
