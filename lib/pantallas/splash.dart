@@ -80,11 +80,11 @@ class _SplashScreenState extends State<SplashScreen>
       try {
         final localData = await DatabaseHelper.instance.getAllAsociaciones();
         if (localData.isNotEmpty) {
-          _setStatus('✓ Datos cargados desde caché local', success: true);
+          _setStatus('Cargando datos locales...', success: true);
           syncOk = true;
         } else {
           _setStatus(
-            '⚠ Sin internet y sin datos locales disponibles.',
+            '⚠ Sin internet y sin datos locales disponibles.\nRevise su conexión a internet.',
             error: true,
           );
         }
@@ -97,10 +97,12 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(Duration(seconds: syncOk ? 1 : 2));
 
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const PublicMainScreen()),
-      );
+      if (syncOk) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const PublicMainScreen()),
+        );
+      }
     }
   }
 
@@ -179,16 +181,37 @@ class _SplashScreenState extends State<SplashScreen>
                   const SizedBox(height: 12),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 350),
-                    child: Text(
-                      _statusMessage,
+                    child: Column(
                       key: ValueKey(_statusMessage),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: statusColor,
-                        fontWeight: FontWeight.w500,
-                        height: 1.4,
-                      ),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _statusMessage,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: statusColor,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                        ),
+                        if (_isError) ...[
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _setStatus('Reintentando...', success: false, error: false);
+                              _initApp();
+                            },
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('Reintentar'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: appColores.dashTealStart,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                          )
+                        ]
+                      ],
                     ),
                   ),
                 ],

@@ -169,7 +169,9 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const double headerHeight = 200;
+    // Tamaños dinámicos basados en la pantalla
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeight = screenHeight * 0.24; // 22% de la pantalla para el header
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -281,7 +283,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                 ),
               ),
               
-              const SizedBox(height: 60), // Espacio para el buscador flotante
+              SizedBox(height: headerHeight * 0.30), // Espacio dinámico para el buscador flotante
               
               // Lista
               Expanded(

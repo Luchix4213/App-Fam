@@ -155,8 +155,9 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Definimos altura del header
-    const double headerHeight = 220; 
+    // Tamaños dinámicos basados en la pantalla
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeight = screenHeight * 0.26; // 25% de la pantalla para el header
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FC), // Fondo gris muy claro limpio
@@ -231,7 +232,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                 ),
               ),
               
-              const SizedBox(height: 80), // Ajustable según diseño
+              SizedBox(height: headerHeight * 0.50), // Espacio dinámico extra para que el buscador no se superponga
               
               // Lista de Asociaciones
               Expanded(
@@ -244,7 +245,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
 
           // 2. Tarjeta Flotante "Asociaciones" (Positioned)
           Positioned(
-            top: 100, // Ajustar posición vertical sobre el header
+            top: headerHeight * 0.45, // Ajuste vertical porcentual sobre el header
             left: 20,
             right: 20,
             child: Column(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/text.dart'; // tus estilos de texto
 import 'package:fam_intento1/pantallas/asociaciones.dart';
 
+
 class PantallaInicio extends StatelessWidget {
   const PantallaInicio({super.key});
 
@@ -36,7 +37,7 @@ class PantallaInicio extends StatelessWidget {
                       width: 220,
                       fit: BoxFit.contain,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
 
                     // Tarjeta Translúcida Central (Ahora con gradiente)
                     Container(
@@ -82,16 +83,10 @@ class PantallaInicio extends StatelessWidget {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 25),
-                          Container(
-                            height: 1.5,
-                            width: 150,
-                            color: Colors.white,
-                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 35),
+                    const SizedBox(height: 45),
 
                     // Botón Principal Celeste Brillante
                     SizedBox(
@@ -139,7 +134,7 @@ class PantallaInicio extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                     
                     // Footer Text integrado en el scroll
                     Text(
