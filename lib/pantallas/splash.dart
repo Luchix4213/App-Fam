@@ -58,7 +58,11 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       // Intentar sincronizar con el backend
-      await SyncService.syncAll();
+      bool isOnline = await SyncService.syncAll();
+      
+      if (!isOnline) {
+        throw Exception("Offline"); // Forzamos el catch de abajo
+      }
 
       // Verificar si realmente pudimos traer datos
       final asociaciones = await DatabaseHelper.instance.getAllAsociaciones();
