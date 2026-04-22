@@ -37,7 +37,7 @@ const Login = () => {
                         <Lock className="h-8 w-8 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold">FAM Bolivia</h2>
-                    <p className="text-teal-100 mt-1">Panel Administrativo para Fam y otros</p>
+                    <p className="text-teal-100 mt-1">Panel Administrativo para Fam</p>
                 </div>
 
                 {/* Formulario */}
