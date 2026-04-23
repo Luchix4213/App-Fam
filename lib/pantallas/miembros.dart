@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
-import 'package:fam_intento1/services/auth_service.dart';
 import 'package:fam_intento1/services/sync_service.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,12 +12,14 @@ class MiembrosScreen extends StatefulWidget {
   final int asociacionId;
   final String asociacionNombre;
   final Color? asociacionColor;
+  final String? asociacionLogo;
 
   const MiembrosScreen({
     super.key,
     required this.asociacionId,
     required this.asociacionNombre,
     this.asociacionColor,
+    this.asociacionLogo,
   });
 
   @override
@@ -52,7 +53,11 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
   }
 
   void _onDataUpdated() {
-    if (mounted) {
+    print("SYNC EVENT TRIGGERED");
+
+    if (!mounted) return;
+
+    if (_miembros.isEmpty) {
       _loadMiembros(forceLocalOnly: true);
     }
   }
@@ -61,9 +66,10 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     final query = _searchCtrl.text.toLowerCase();
     setState(() {
       _filteredMiembros = _miembros.where((m) {
-        final nombre = (m['nombre'] ?? '').toLowerCase();
-        final alias = (m['alias'] ?? '').toLowerCase();
-        final municipio = (m['municipio'] ?? '').toLowerCase();
+        // Agregamos .toString() por si algún dato del JSON llega como número
+        final nombre = (m['nombre']?.toString() ?? '').toLowerCase();
+        final alias = (m['alias']?.toString() ?? '').toLowerCase();
+        final municipio = (m['municipio']?.toString() ?? '').toLowerCase();
         return nombre.contains(query) || alias.contains(query) || municipio.contains(query);
       }).toList();
     });
@@ -73,6 +79,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
     // 1. Cargar datos locales inmediatamente
     try {
       final localData = await DatabaseHelper.instance.getMinistrosByAsoc(widget.asociacionId);
+      //print("LOCAL DATA LENGTH: ${localData.length}");
       if (localData.isNotEmpty) {
         if (mounted) {
           setState(() {
@@ -81,8 +88,12 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
           });
         }
       } else {
-        if (mounted) {
-          setState(() { _isLoading = true; _errorMessage = null; });
+        // Si ya hay datos cargados no los borres
+        if (_miembros.isEmpty && mounted) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = "No se encontraron miembros.";
+          });
         }
       }
     } catch (e) {
@@ -94,29 +105,43 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
       try {
         final res = await ApiService.getMiembrosByAsociacion(widget.asociacionId);
         if (res['success'] == true) {
-          final List<dynamic> data = res['data'];
+          final List<dynamic> data = res['data'] ?? [];
           
-          // Sanitizar y guardar en SQLite
-          List<Map<String, dynamic>> miemClean = data.map((item) {
-            Map<String, dynamic> map = Map<String, dynamic>.from(item);
-            map.removeWhere((key, value) => value is Map || value is List);
-            return map;
-          }).toList();
+          //print("API DATA LENGTH: ${data.length}"); // Agregado para que veas en terminal si llega a 0
 
-          await DatabaseHelper.instance.syncMinistros(miemClean);
-          
-          // Actualizamos UI solo si seguimos en pantalla
-          if (mounted) {
-            setState(() {
-              _procesarListaMiembros(data);
-              _filter();
-              _isLoading = false;
-              _errorMessage = null;
-            });
+          // SOLUCIÓN: Solo actualizamos y sobreescribimos si la API trajo datos
+          if (data.isNotEmpty) {
+            // Sanitizar y guardar en SQLite
+            List<Map<String, dynamic>> miemClean = data.map((item) {
+              Map<String, dynamic> map = Map<String, dynamic>.from(item);
+              map.removeWhere((key, value) => value is Map || value is List);
+              return map;
+            }).toList();
+
+            await DatabaseHelper.instance.syncMinistros(miemClean);
+            
+            // Actualizamos UI
+            if (mounted) {
+              setState(() {
+                _procesarListaMiembros(data);
+                _filter();
+                _isLoading = false;
+                _errorMessage = null;
+              });
+            }
+          } else {
+            // Si la API devolvió vacío, NO borramos los datos locales de la pantalla.
+            // Solo apagamos el indicador de carga.
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+            print("Advertencia: La API respondió con éxito pero devolvió 0 miembros.");
           }
         }
       } catch (apiError) {
-        print("Background Fetch Error: \$apiError.");
+        print("Background Fetch Error: $apiError");
         if (mounted && _miembros.isEmpty) {
           setState(() {
             _isLoading = false;
@@ -144,7 +169,9 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const double headerHeight = 200;
+    // Tamaños dinámicos basados en la pantalla
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeight = screenHeight * 0.24; // 22% de la pantalla para el header
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -186,34 +213,68 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                       
                       // Contenido Central Header
                       Positioned.fill(
-                        top: 30,
+                        top: 25,
                         child: Column(
                           children: [
-                            const Text(
-                              "MIEMBROS",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2.0,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                widget.asociacionNombre.toUpperCase(),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.visible, // Permitir wrapping
+                            if (widget.asociacionLogo != null && widget.asociacionLogo!.isNotEmpty)
+                              Container(
+                                width: 90,
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.5),
+                                    width: 3,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.asociacionLogo!.startsWith('http') 
+                                        ? widget.asociacionLogo! 
+                                        : "${ApiService.baseUrl.replaceAll('/api', '')}${widget.asociacionLogo!}",
+                                    fit: BoxFit.contain,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: appColores.dashTealStart)
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(Icons.business, color: Colors.grey, size: 40),
+                                  ),
+                                ),
+                              )
+                            else ...[
+                              const Text(
+                                "MIEMBROS",
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.2,
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 2.0,
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  widget.asociacionNombre.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -222,7 +283,7 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                 ),
               ),
               
-              const SizedBox(height: 60), // Espacio para el buscador flotante
+              SizedBox(height: headerHeight * 0.30), // Espacio dinámico para el buscador flotante
               
               // Lista
               Expanded(
@@ -472,13 +533,13 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
-                       color: appColores.badgePurpleLight,
+                       color: Color(0xFF6B6B66),
                        borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       miembro['tipo_miembro'].toString(),
                       style: const TextStyle(
-                        color: appColores.badgePurple,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12
                       ),

@@ -62,7 +62,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
       
       int getPriority(String name) {
         // Usa RegExp con word boundaries para exactamente "AMB" o su nombre largo
-        if (name == 'SAM') return 1;
+        if (name == 'FAM BOLIVIA') return 1;
         if (name.contains('ACOBOL')) return 2;
         if (RegExp(r'\bAMB\b').hasMatch(name) || name.contains('MUNICIPALIDADES DE BOLIVIA')) return 3;
         return 4;
@@ -155,8 +155,9 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Definimos altura del header
-    const double headerHeight = 220; 
+    // Tamaños dinámicos basados en la pantalla
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeight = screenHeight * 0.26; // 25% de la pantalla para el header
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FC), // Fondo gris muy claro limpio
@@ -231,7 +232,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                 ),
               ),
               
-              const SizedBox(height: 80), // Ajustable según diseño
+              SizedBox(height: headerHeight * 0.50), // Espacio dinámico extra para que el buscador no se superponga
               
               // Lista de Asociaciones
               Expanded(
@@ -244,7 +245,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
 
           // 2. Tarjeta Flotante "Asociaciones" (Positioned)
           Positioned(
-            top: 100, // Ajustar posición vertical sobre el header
+            top: headerHeight * 0.45, // Ajuste vertical porcentual sobre el header
             left: 20,
             right: 20,
             child: Column(
@@ -254,15 +255,12 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(25),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        appColores.assocGradientMiddle.withOpacity(0.95),
-                        appColores.assocGradientBottom.withOpacity(0.85),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: const Color(0xFF2A6FA8),
                     borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: Colors.white, 
+                      width: 0.6, 
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFF1B5E20).withOpacity(0.3),
@@ -291,7 +289,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Sistema Asociativo Municipal. Selecciona una asociación para ver sus miembros.",
+                        "Sistema Asociativo Municipal. Selecciona una asociación para ver sus municipios.",
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.95),
                           fontSize: 14,
@@ -434,6 +432,7 @@ class _AsociacionesScreenState extends State<AsociacionesScreen> {
                   asociacionId: asociacion['id'],
                   asociacionNombre: nombreAsoc,
                   asociacionColor: asociacionColor,
+                  asociacionLogo: asociacion['foto'],
                 ),
               ),
             );

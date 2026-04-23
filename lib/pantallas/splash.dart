@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fam_intento1/core/colors.dart';
-import 'package:fam_intento1/services/auth_service.dart';
-import 'package:fam_intento1/pantallas/login.dart';
-import 'package:fam_intento1/pantallas/Inicio.dart';
 import 'package:fam_intento1/services/sync_service.dart';
+import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/pantallas/public_main_screen.dart';
-import 'package:fam_intento1/pantallas/admin/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,53 +11,100 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  String _statusMessage = 'Iniciando...';
+  bool _isSuccess = false;
+  bool _isError = false;
+  late AnimationController _logoController;
+  late Animation<double> _logoAnim;
 
-
-class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    // Animación de aparición del logo
+    _logoController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _logoAnim = CurvedAnimation(parent: _logoController, curve: Curves.easeOut);
+    _logoController.forward();
+
+    _initApp();
   }
 
-  Future<void> _checkAuth() async {
-    // Inicializar el servicio de autenticación
-    await AuthService.initialize();
+  @override
+  void dispose() {
+    _logoController.dispose();
+    super.dispose();
+  }
 
-    // Sincronizar datos en segundo plano (no bloqueante o con timeout corto si se desea)
-    // Para asegurar datos frescos al inicio, podríamos esperar.
-    // Usaremos un "fire and forget" seguro o esperamos si queremos garantizar datos.
-    // Dado que existe JSON local, no bloqueamos demasiado.
-    SyncService.syncAll(); 
+  void _setStatus(String msg, {bool success = false, bool error = false}) {
+    if (mounted) {
+      setState(() {
+        _statusMessage = msg;
+        _isSuccess = success;
+        _isError = error;
+      });
+    }
+  }
 
-    // Esperar un poco para mostrar el splash
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> _initApp() async {
+    // Pequeña pausa para que el logo aparezca primero
+    await Future.delayed(const Duration(milliseconds: 600));
+    _setStatus('Conectando al servidor...');
 
-    // Verificar si hay un token válido
-    var isValid = await AuthService.verifyToken();
+    bool syncOk = false;
+
+    try {
+      // Intentar sincronizar con el backend
+      bool isOnline = await SyncService.syncAll();
+      
+      if (!isOnline) {
+        throw Exception("Offline"); // Forzamos el catch de abajo
+      }
+
+      // Verificar si realmente pudimos traer datos
+      final asociaciones = await DatabaseHelper.instance.getAllAsociaciones();
+      if (asociaciones.isNotEmpty) {
+        syncOk = true;
+        _setStatus('Conexion exitosa', success: true);
+      } else {
+        // El sync corrió pero no hay nada en local (primera instalación sin red)
+        _setStatus(
+          'Sin datos disponibles. Verifica tu conexión.',
+          error: true,
+        );
+      }
+    } catch (e) {
+      // Error de red: intentar con datos locales
+      _setStatus('Sin conexión. Cargando datos locales...');
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      try {
+        final localData = await DatabaseHelper.instance.getAllAsociaciones();
+        if (localData.isNotEmpty) {
+          _setStatus('Cargando datos locales...', success: true);
+          syncOk = true;
+        } else {
+          _setStatus(
+            '⚠ Sin internet y sin datos locales disponibles.\nRevise su conexión a internet.',
+            error: true,
+          );
+        }
+      } catch (_) {
+        _setStatus('⚠ Error al leer los datos locales.', error: true);
+      }
+    }
+
+    // Esperar un momento para que el usuario lea el mensaje final
+    await Future.delayed(Duration(seconds: syncOk ? 1 : 2));
 
     if (mounted) {
-      if (AuthService.isLoggedIn && isValid) {
-        // Usuario logueado y token válido
-        final role = await AuthService.getUserRole();
-        final isAdmin = role != null && (role.toLowerCase() == 'admin' || role.toLowerCase() == 'superadmin' || role.toLowerCase() == 'fam');
-
+      if (syncOk) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => isAdmin ? const DashboardScreen() : const PublicMainScreen(),
-          ),
-        );
-      } else {
-        // Usuario no logueado o token inválido
-        if (AuthService.isLoggedIn) {
-          // Token inválido, hacer logout
-          await AuthService.logout();
-        }
-        // Exigir login para todos (ya sea admin o usuario público)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const PublicMainScreen()),
         );
       }
     }
@@ -68,26 +112,113 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Color statusColor = _isSuccess
+        ? const Color(0xFF4CAF50) // Verde éxito
+        : _isError
+        ? const Color(0xFFEF5350) // Rojo error
+        : Colors.grey.shade500;   // Gris neutral
+
     return Scaffold(
-      backgroundColor: appColores.backgraund,
-      body: Center(
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/images/famlogo.png",
-              height: 200,
+            // Logo ocupa la mayor parte de la pantalla
+            Expanded(
+              child: Center(
+                child: ScaleTransition(
+                  scale: _logoAnim,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/images/famlogo.png',
+                        height: 160,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Directorio Municipal',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: appColores.dashTealStart,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'FAM Bolivia',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade500,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 30),
-            const CircularProgressIndicator(
-              color: Color.fromARGB(255, 72, 228, 33),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Cargando...',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+
+            // Zona de estado inferior
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 48),
+              child: Column(
+                children: [
+                  // Indicador de carga (solo visible cuando no hay resultado final)
+                  if (!_isSuccess && !_isError)
+                    const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: appColores.dashTealStart,
+                      ),
+                    )
+                  else
+                    Icon(
+                      _isSuccess ? Icons.check_circle_rounded : Icons.warning_rounded,
+                      color: statusColor,
+                      size: 24,
+                    ),
+                  const SizedBox(height: 12),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    child: Column(
+                      key: ValueKey(_statusMessage),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _statusMessage,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: statusColor,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                        ),
+                        if (_isError) ...[
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _setStatus('Reintentando...', success: false, error: false);
+                              _initApp();
+                            },
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('Reintentar'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: appColores.dashTealStart,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                          )
+                        ]
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

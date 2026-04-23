@@ -8,16 +8,18 @@ class SyncService {
   
   
   // Sincronizar todo (Asociaciones -> Miembros)
-  static Future<void> syncAll() async {
+  static Future<bool> syncAll() async {
     print("----------------------------------------------------------------");
     print("[SyncService] Iniciando sincronización completa (Sin Departamentos)...");
     
+    bool connectionSuccess = false;
     try {
       // 1. OBTENER ASOCIACIONES
       print("[SyncService] Solicitando ASOCIACIONES a API...");
       final asocRes = await ApiService.getAllAsociaciones();
       
       if (asocRes['success'] == true) {
+        connectionSuccess = true;
         final List<dynamic> asociaciones = asocRes['data'];
         print("[SyncService] Recibidas \${asociaciones.length} asociaciones.");
         
@@ -86,10 +88,12 @@ class SyncService {
       
       // Tocar la campana para que todas las pantallas se refresquen
       onDataUpdated.value++;
+      return connectionSuccess;
       
     } catch (e) {
       print("[SyncService] CRITICAL ERROR / NETWORK EXCEPTION durante la sincronización: \$e");
       print("[SyncService] La limpieza total fue abortada para proteger el caché Offline.");
+      return false;
     } finally {
       print("----------------------------------------------------------------");
     }
