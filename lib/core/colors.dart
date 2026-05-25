@@ -9,7 +9,7 @@ class appColores{
 
   static const Color nvBlue = Color(0xFF0A1F44); // Cyan/Blue vibrant
   static const Color nvinactivo = Color(0xFF8A9BB5); // Cyan/Blue vibrant
-  static const Color nvactivo = Color(0xFF007934); // Cyan/Blue vibrant
+  static const Color nvactivo = Color(0xFF); // Cyan/Blue vibrant
   
   // Gradients
   static const Color gradientTop = Color(0xFFE0F7FA); // Light Cyan

@@ -30,7 +30,7 @@ class ContactoScreen extends StatelessWidget {
     const fax = "Fax: (591) 2 2782106";
     const correo = "contacto@fam.org.bo";
     const locationMapUrl = "https://maps.app.goo.gl/CWTLdhaCnqE8Lobc9";
-
+    const politicaUrl = "https://fam-bolivia-politica-privacidad.netlify.app";
     return Scaffold(
       backgroundColor: Colors.white, // Fondo blanco entero
       body: Column(
@@ -95,6 +95,22 @@ class ContactoScreen extends StatelessWidget {
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          _buildSectionTitle("Política de Privacidad"),
+
+                          GestureDetector(
+                            onTap: () => _launchUrl(politicaUrl),
+                            child: const Text(
+                              "Ver política de privacidad",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
                                 decoration: TextDecoration.underline,
                                 decorationColor: Colors.white,
                               ),

@@ -11,29 +11,62 @@ const PersonalList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
-        try { const res = await api.get('/personal'); setData(Array.isArray(res.data) ? res.data : (res.data?.data || [])); } catch (e) { console.error(e); }
+        try {
+
+            let url = '/personal';
+
+            if (filterEstado === 'activo') {
+                url = '/personal?estado=activo';
+            }
+
+            if (filterEstado === 'inactivo') {
+                url = '/personal?estado=inactivo';
+            }
+
+            const res = await api.get(url);
+
+            setData(Array.isArray(res.data) ? res.data : (res.data?.data || []));
+
+        } catch (e) {
+            console.error(e);
+        }
+
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => {
+        fetchData();
+    }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (!showInactive) list = list.filter(p => p.estado !== 'inactivo');
+        let list = [...data];
+
+        if (filterEstado === 'activo') {
+            list = list.filter(p => String(p.estado).toLowerCase() === 'activo');
+        }
+
+        if (filterEstado === 'inactivo') {
+            list = list.filter(p => String(p.estado).toLowerCase() === 'inactivo');
+        }
+
         if (search) {
             const q = search.toLowerCase();
-            list = list.filter(p => (p.nombre || '').toLowerCase().includes(q) || (p.cargo || '').toLowerCase().includes(q));
+            list = list.filter(p =>
+                (p.nombre || '').toLowerCase().includes(q) ||
+                (p.cargo || '').toLowerCase().includes(q)
+            );
         }
+
         setFiltered(list);
-    }, [data, search, showInactive]);
+    }, [data, search, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este personal?')) return;
-        try { await api.delete(`/personal/${id}`); fetchData(); } catch (e) { alert('Error'); }
+        try { await api.put(`/personal/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
     const handleReactivate = async (id) => {
         try { await api.put(`/personal/${id}`, { estado: 'activo' }); fetchData(); } catch (e) { alert('Error'); }
@@ -54,9 +87,12 @@ const PersonalList = () => {
                     <input type="text" placeholder="Buscar por nombre o cargo..." value={search} onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition" />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded" /> Inactivos
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
             </div>
 
             {loading ? (
@@ -86,10 +122,10 @@ const PersonalList = () => {
                                         <td className="p-4 text-sm text-slate-500">{p.cargo || '—'}</td>
                                         <td className="p-4 text-sm text-slate-500">{p.celular || '—'}</td>
                                         <td className="p-4 text-sm text-slate-500">{p.correo_electronico || '—'}</td>
-                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${p.estado === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{p.estado === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
+                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${String(p.estado).toLowerCase() === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{String(p.estado).toLowerCase() === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
                                         <td className="p-4"><div className="flex items-center justify-end gap-2">
                                             <button onClick={() => { setEditing(p); setShowForm(true); }} className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><Pencil size={16} /></button>
-                                            {p.estado === 'inactivo' ? <button onClick={() => handleReactivate(p.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
+                                            {String(p.estado).toLowerCase() === 'inactivo' ? <button onClick={() => handleReactivate(p.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
                                                 : <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 size={16} /></button>}
                                         </div></td>
                                     </tr>

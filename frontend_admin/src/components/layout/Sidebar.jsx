@@ -29,7 +29,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
 
     return (
         <aside className={`fixed top-0 left-0 h-screen bg-slate-900 text-white transition-all duration-300 z-50
-      ${collapsed ? 'w-20' : 'w-64'} flex flex-col`}>
+      ${collapsed ? '-translate-x-full md:translate-x-0 md:w-20 w-64' : 'translate-x-0 w-64'} flex flex-col`}>
 
             {/* Logo */}
             <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
@@ -42,8 +42,12 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                     </div>
                 )}
                 <button onClick={() => setCollapsed(!collapsed)}
-                    className="p-2 rounded-lg hover:bg-slate-700/50 transition-colors ml-auto">
+                    className="p-2 rounded-lg hover:bg-slate-700/50 transition-colors ml-auto hidden md:block">
                     {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+                </button>
+                <button onClick={() => setCollapsed(true)}
+                    className="p-2 rounded-lg hover:bg-slate-700/50 transition-colors ml-auto md:hidden">
+                    <ChevronLeft size={18} />
                 </button>
             </div>
 
@@ -56,6 +60,11 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                 )}
                 {visibleItems.map(({ to, icon: Icon, label }) => (
                     <NavLink key={to} to={to} end={to === '/'}
+                        onClick={() => {
+                            if (window.innerWidth < 768) {
+                                setCollapsed(true);
+                            }
+                        }}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
               ${isActive

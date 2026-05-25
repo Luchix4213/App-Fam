@@ -9,29 +9,40 @@ const UsuariosList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
-        try { const res = await api.get('/users'); setData(Array.isArray(res.data) ? res.data : (res.data?.data || [])); } catch (e) { console.error(e); }
+        try {
+            let url = '/users';
+            if (filterEstado === 'activo') url = '/users?estado=activo';
+            if (filterEstado === 'inactivo') url = '/users?estado=inactivo';
+            const res = await api.get(url);
+            setData(Array.isArray(res.data) ? res.data : (res.data?.data || []));
+        } catch (e) { console.error(e); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { fetchData(); }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (!showInactive) list = list.filter(u => u.estado !== 'inactivo');
+        let list = [...data];
+        if (filterEstado === 'activo') {
+            list = list.filter(u => String(u.estado).toLowerCase().trim() === 'activo' || !u.estado);
+        }
+        if (filterEstado === 'inactivo') {
+            list = list.filter(u => String(u.estado).toLowerCase().trim() === 'inactivo');
+        }
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
         }
         setFiltered(list);
-    }, [data, search, showInactive]);
+    }, [data, search, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar este usuario?')) return;
-        try { await api.delete(`/users/${id}`); fetchData(); } catch (e) { alert('Error'); }
+        try { await api.put(`/usuarios/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
     const handleReactivate = async (id) => {
         try { await api.put(`/users/${id}`, { estado: 'activo' }); fetchData(); } catch (e) { alert('Error'); }
@@ -58,9 +69,12 @@ const UsuariosList = () => {
                     <input type="text" placeholder="Buscar por nombre o email..." value={search} onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition" />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded" /> Inactivos
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
             </div>
 
             {loading ? (
@@ -89,10 +103,10 @@ const UsuariosList = () => {
                                         </td>
                                         <td className="p-4 text-sm text-slate-500">{u.email}</td>
                                         <td className="p-4">{roleBadge(u.role)}</td>
-                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${u.estado === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{u.estado === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
+                                        <td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-semibold ${String(u.estado).toLowerCase().trim() === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>{String(u.estado).toLowerCase().trim() === 'inactivo' ? 'Inactivo' : 'Activo'}</span></td>
                                         <td className="p-4"><div className="flex items-center justify-end gap-2">
                                             <button onClick={() => { setEditing(u); setShowForm(true); }} className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><Pencil size={16} /></button>
-                                            {u.estado === 'inactivo' ? <button onClick={() => handleReactivate(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
+                                            {String(u.estado).toLowerCase().trim() === 'inactivo' ? <button onClick={() => handleReactivate(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"><RotateCcw size={16} /></button>
                                                 : <button onClick={() => handleDelete(u.id)} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 size={16} /></button>}
                                         </div></td>
                                     </tr>

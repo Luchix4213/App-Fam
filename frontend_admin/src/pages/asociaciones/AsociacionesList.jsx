@@ -11,33 +11,41 @@ const AsociacionesList = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [showInactive, setShowInactive] = useState(false);
+    const [filterEstado, setFilterEstado] = useState('activo');
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/asociaciones');
+            let url = '/asociaciones';
+            if (filterEstado === 'activo') url = '/asociaciones?estado=activo';
+            if (filterEstado === 'inactivo') url = '/asociaciones?estado=inactivo';
+            const res = await api.get(url);
             const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setData(list);
         } catch (e) { console.error(e); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { fetchData(); }, [filterEstado]);
 
     useEffect(() => {
-        let list = data;
-        if (!showInactive) list = list.filter(a => a.estado !== 'inactivo');
+        let list = [...data];
+        if (filterEstado === 'activo') {
+            list = list.filter(a => String(a.estado).toLowerCase().trim() === 'activo' || !a.estado);
+        }
+        if (filterEstado === 'inactivo') {
+            list = list.filter(a => String(a.estado).toLowerCase().trim() === 'inactivo');
+        }
         if (search) {
             const q = search.toLowerCase();
             list = list.filter(a => (a.nombre || '').toLowerCase().includes(q) || (a.alias || '').toLowerCase().includes(q));
         }
         setFiltered(list);
-    }, [data, search, showInactive]);
+    }, [data, search, filterEstado]);
 
     const handleDelete = async (id) => {
         if (!confirm('¿Deseas desactivar esta asociación?')) return;
-        try { await api.delete(`/asociaciones/${id}`); fetchData(); } catch (e) { alert('Error al eliminar'); }
+        try { await api.put(`/asociaciones/${id}`, { estado: 'inactivo' }); fetchData(); } catch (e) { alert('Error al desactivar'); }
     };
 
     const handleReactivate = async (id) => {
@@ -67,10 +75,12 @@ const AsociacionesList = () => {
                     <input type="text" placeholder="Buscar por nombre o alias..." value={search} onChange={e => setSearch(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition" />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
-                    <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} className="rounded text-teal-500 focus:ring-teal-500" />
-                    Mostrar inactivos
-                </label>
+                <select value={filterEstado} onChange={e => setFilterEstado(e.target.value)}
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
             </div>
 
             {/* Table */}
@@ -97,8 +107,8 @@ const AsociacionesList = () => {
                                     <tr key={a.id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                {a.logo ? (
-                                                    <img src={a.logo.startsWith('http') ? a.logo : `${API_BASE}${a.logo}`}
+                                                {a.foto ? (
+                                                    <img src={a.foto.startsWith('http') ? a.foto : `${API_BASE}${a.foto}`}
                                                         className="w-10 h-10 rounded-xl object-cover border border-slate-200" alt="" />
                                                 ) : (
                                                     <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
@@ -120,8 +130,8 @@ const AsociacionesList = () => {
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-semibold
-                        ${a.estado === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                                {a.estado === 'inactivo' ? 'Inactivo' : 'Activo'}
+                        ${String(a.estado).toLowerCase().trim() === 'inactivo' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                                                {String(a.estado).toLowerCase().trim() === 'inactivo' ? 'Inactivo' : 'Activo'}
                                             </span>
                                         </td>
                                         <td className="p-4">
@@ -130,7 +140,7 @@ const AsociacionesList = () => {
                                                     className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
                                                     <Pencil size={16} />
                                                 </button>
-                                                {a.estado === 'inactivo' ? (
+                                                {String(a.estado).toLowerCase().trim() === 'inactivo' ? (
                                                     <button onClick={() => handleReactivate(a.id)} title="Reactivar"
                                                         className="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-colors">
                                                         <RotateCcw size={16} />
@@ -169,7 +179,7 @@ const AsociacionForm = ({ asociacion, onClose, onSaved }) => {
     const [alias, setAlias] = useState(asociacion?.alias || '');
     const [color, setColor] = useState(asociacion?.color || '#0ea5e9');
     const [imageFile, setImageFile] = useState(null);
-    const [preview, setPreview] = useState(asociacion?.logo ? (asociacion.logo.startsWith('http') ? asociacion.logo : `${API_BASE}${asociacion.logo}`) : null);
+    const [preview, setPreview] = useState(asociacion?.foto ? (asociacion.foto.startsWith('http') ? asociacion.foto : `${API_BASE}${asociacion.foto}`) : null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
