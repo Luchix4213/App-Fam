@@ -114,7 +114,7 @@ export const getMiembrosByAsociacion = async (req, res) => {
 
     // Campos básicos para todos los usuarios (Vista Pública)
     const attributes = [
-      'id', 'alias', 'nombre', 'municipio',
+      'id', 'id_asociacion', 'alias', 'nombre', 'municipio',
       'telefono_publico', 'telefono_fax', 'correo_publico', 'direccion', 'foto'
     ];
 
