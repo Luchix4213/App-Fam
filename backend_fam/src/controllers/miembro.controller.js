@@ -126,11 +126,7 @@ export const getMiembrosByAsociacion = async (req, res) => {
       attributes: attributes,
       include: [{
         model: Asociacion,
-        attributes: ['id', 'nombre', 'alias', 'tipo', 'id_departamento'],
-        include: [{
-          model: Departamento,
-          attributes: ['id', 'nombre']
-        }]
+        attributes: ['id', 'nombre', 'alias']
       }],
       order: [['nombre', 'ASC']]
     });
