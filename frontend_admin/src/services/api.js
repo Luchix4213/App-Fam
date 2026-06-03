@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // baseURL: 'http://localhost:4000/api', // Desarrollo local
-    baseURL: 'https://api-fambolivia.onrender.com/api', // Producción
+    baseURL: 'https://api.fam.org.bo/api', // Producción
 });
 
 // Interceptor para añadir el token en cada petición

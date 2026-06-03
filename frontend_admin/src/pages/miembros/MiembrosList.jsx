@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Plus, Pencil, Trash2, RotateCcw, Search, X, Upload, Users as UsersIcon } from 'lucide-react';
 
-const API_BASE = 'https://api-fambolivia.onrender.com';
+const API_BASE = 'https://api.fam.org.bo';
 
 const MiembrosList = () => {
     const [data, setData] = useState([]);

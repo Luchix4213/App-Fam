@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Plus, Pencil, Trash2, RotateCcw, Search, X, Upload, Newspaper } from 'lucide-react';
 
-const API_BASE = 'https://api-fambolivia.onrender.com';
+const API_BASE = 'https://api.fam.org.bo';
 
 const NoticiasList = () => {
     const [data, setData] = useState([]);
