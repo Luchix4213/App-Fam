@@ -17,5 +17,18 @@ jobs:
             git fetch origin
             git reset --hard origin/master
             cd backend_fam
+            # Restaurar .env si fue borrado
+            if [ ! -f .env ]; then
+              echo "DB_NAME=directorio_municipal" > .env
+              echo "DB_USER=appuser" >> .env
+              echo "DB_PASSWORD=AppPass2026x" >> .env
+              echo "DB_HOST=localhost" >> .env
+              echo "DB_DIALECT=postgres" >> .env
+              echo "CLOUDINARY_API_KEY=955422449298484" >> .env
+              echo "CLOUDINARY_API_SECRET=rJzbX5rXt-iXyyfWxDXHyY1JVFs" >> .env
+              echo "CLOUDINARY_CLOUD_NAME=doyclpcal" >> .env
+              echo "JWT_SECRET=secreto_super_seguro" >> .env
+              echo "PORT=3000" >> .env
+            fi
             npm install --production
-            pm2 restart fam-api
+            pm2 restart fam-api --update-env
