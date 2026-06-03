@@ -48,7 +48,7 @@ app.use("/api/asociaciones", asociacionRoutes);
 app.use("/api/miembros", miembroRoutes);
 app.use("/api/personal", personalRoutes);
 app.use("/api/noticias", noticiaRoutes);
-await sequelize.sync({ alter: true }); // actualiza tablas si cambian
+await sequelize.sync(); // actualiza tablas si cambian
 
 // Middleware de manejo de errores global
 app.use((err, req, res, next) => {
