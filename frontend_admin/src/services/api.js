@@ -22,7 +22,7 @@ api.interceptors.response.use(
             // Token expirado o inválido → cerrar sesión
             localStorage.removeItem('admin_token');
             localStorage.removeItem('admin_user');
-            window.location.href = '/login';
+            window.location.href = '/';
         }
         // 403 = sin permisos, NO cerrar sesión, solo rechazar la petición
         return Promise.reject(error);
