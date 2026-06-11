@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 /// ApiService simplificado — solo lectura (GET) para app informativa pública.
 /// Todo el CRUD admin se maneja desde el dashboard web React.
 class ApiService {
-  static const String baseUrl = 'https://api.fam.org.bo/api';
+  //static const String baseUrl = 'https://api.fam.org.bo/api';
+  static const String baseUrl = 'http://[IP_ADDRESS]';
 
   static Map<String, String> _getHeaders() {
     return {

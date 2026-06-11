@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fam_intento1/core/colors.dart';
 import 'package:fam_intento1/services/api_service.dart';
 import 'package:fam_intento1/services/sync_service.dart';
@@ -7,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fam_intento1/database/databese_helper.dart';
 import 'package:fam_intento1/pantallas/info_screen.dart';
 import 'package:fam_intento1/pantallas/contacto_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MiembrosScreen extends StatefulWidget {
   final int asociacionId;
@@ -327,175 +329,243 @@ class _MiembrosScreenState extends State<MiembrosScreen> {
 
     final String? badgeAlias = isAmdes ? miembro['alias'] : null;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: widget.asociacionColor != null 
-            ? Border.all(color: widget.asociacionColor!, width: 2) 
-            : null,
-        boxShadow: [
-          BoxShadow(
-            color: widget.asociacionColor?.withOpacity(0.2) ?? Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Row Superior: Avatar + Nombres
-            Row(
+    // Determinar número de teléfono a llamar
+    final String? telPublico = miembro['telefono_publico']?.toString().trim().isEmpty == true
+        ? null
+        : miembro['telefono_publico']?.toString().trim();
+    final String? telFax = miembro['telefono_fax']?.toString().trim().isEmpty == true
+        ? null
+        : miembro['telefono_fax']?.toString().trim();
+    final String? numeroLlamar = telPublico ?? telFax;
+
+    final Color circleColor = widget.asociacionColor ?? appColores.assocGradientMiddle;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: widget.asociacionColor != null 
+                ? Border.all(color: widget.asociacionColor!, width: 2) 
+                : null,
+            boxShadow: [
+              BoxShadow(
+                color: widget.asociacionColor?.withOpacity(0.2) ?? Colors.grey.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Avatar Circle
-                (() {
-                  final rawFoto = miembro['foto']?.toString() ?? '';
-                  final networkPhoto = rawFoto.isNotEmpty 
-                      ? (rawFoto.startsWith('http') ? rawFoto : "${ApiService.baseUrl.replaceAll('/api', '')}$rawFoto") 
-                      : null;
+                // Row Superior: Avatar + Nombres
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Avatar Circle
+                    (() {
+                      final rawFoto = miembro['foto']?.toString() ?? '';
+                      final networkPhoto = rawFoto.isNotEmpty 
+                          ? (rawFoto.startsWith('http') ? rawFoto : "${ApiService.baseUrl.replaceAll('/api', '')}$rawFoto") 
+                          : null;
 
-                  return Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: widget.asociacionColor == null ? const LinearGradient(
-                        colors: [appColores.assocGradientMiddle, appColores.blueGradientBottom], 
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ) : null,
-                      color: widget.asociacionColor,
-                      border: widget.asociacionColor != null ? Border.all(color: widget.asociacionColor!.withOpacity(0.5), width: 3) : null,
-                      boxShadow: [
-                        BoxShadow(
-                          color: widget.asociacionColor?.withOpacity(0.3) ?? appColores.assocGradientMiddle.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3)
-                        )
-                      ]
-                    ),
-                    child: ClipOval(
-                      child: networkPhoto != null
-                          ? CachedNetworkImage(
-                              imageUrl: networkPhoto, 
-                              fit: BoxFit.cover, 
-                              errorWidget: (context, url, error) => _buildInitial(mainTitle),
-                              placeholder: (context, url) => const Padding(
-                                padding: EdgeInsets.all(16), 
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
-                              ),
+                      return Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: widget.asociacionColor == null ? const LinearGradient(
+                            colors: [appColores.assocGradientMiddle, appColores.blueGradientBottom], 
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ) : null,
+                          color: widget.asociacionColor,
+                          border: widget.asociacionColor != null ? Border.all(color: widget.asociacionColor!.withOpacity(0.5), width: 3) : null,
+                          boxShadow: [
+                            BoxShadow(
+                              color: widget.asociacionColor?.withOpacity(0.3) ?? appColores.assocGradientMiddle.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3)
                             )
-                          : _buildInitial(mainTitle),
-                    ),
-                  );
-                })(),
-                
-                const SizedBox(width: 15),
-                
-                // Textos Header
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        mainTitle.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF263238),
+                          ]
+                        ),
+                        child: ClipOval(
+                          child: networkPhoto != null
+                              ? CachedNetworkImage(
+                                  imageUrl: networkPhoto, 
+                                  fit: BoxFit.cover, 
+                                  errorWidget: (context, url, error) => _buildInitial(mainTitle),
+                                  placeholder: (context, url) => const Padding(
+                                    padding: EdgeInsets.all(16), 
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                                  ),
+                                )
+                              : _buildInitial(mainTitle),
+                        ),
+                      );
+                    })(),
+                    
+                    const SizedBox(width: 15),
+                    
+                    // Textos Header (dejamos espacio para el círculo a la derecha)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 32),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              mainTitle.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF263238),
+                              ),
+                            ),
+                            if (subtitle1 != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                subtitle1,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                            if (subtitle2 != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                subtitle2,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                            // Tag Partido/Alias (Optional if exists)
+                            if (badgeAlias != null && badgeAlias.isNotEmpty) ...[
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: appColores.badgeBlueLight,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  badgeAlias,
+                                  style: const TextStyle(
+                                    color: appColores.badgeBlue,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                      if (subtitle1 != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle1,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                      if (subtitle2 != null) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle2,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                      // Tag Partido/Alias (Optional if exists)
-                      if (badgeAlias != null && badgeAlias.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: appColores.badgeBlueLight,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            badgeAlias,
-                            style: const TextStyle(
-                              color: appColores.badgeBlue,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Divider(height: 1, color: Color(0xFFEEEEEE)),
+                ),
+
+                // Detalles Contacto
+                _buildDetailRow(Icons.phone_outlined, "Telefono:", miembro['telefono_publico'], Colors.green),
+                _buildDetailRow(Icons.fax_outlined, "Fax:", miembro['telefono_fax'], Colors.teal),
+                _buildDetailRow(Icons.email_outlined, "Correo:", miembro['correo_publico'], Colors.blueAccent),
+                _buildDetailRow(Icons.location_on_outlined, "Dirección:", miembro['direccion'], Colors.redAccent),
+
+                const SizedBox(height: 15),
+                
+                // Badges Footer (Tipo Miembro)
+                if (miembro['tipo_miembro'] != null && miembro['tipo_miembro'].toString().isNotEmpty)
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                           color: const Color(0xFF6B6B66),
+                           borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          miembro['tipo_miembro'].toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
               ],
             ),
-            
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              child: Divider(height: 1, color: Color(0xFFEEEEEE)),
-            ),
-
-            // Detalles Contacto
-            _buildDetailRow(Icons.phone_outlined, "Telefono:", miembro['telefono_publico'], Colors.green),
-            _buildDetailRow(Icons.fax_outlined, "Fax:", miembro['telefono_fax'], Colors.teal),
-            _buildDetailRow(Icons.email_outlined, "Correo:", miembro['correo_publico'], Colors.blueAccent),
-            _buildDetailRow(Icons.location_on_outlined, "Dirección:", miembro['direccion'], Colors.redAccent),
-            
-
-
-            const SizedBox(height: 15),
-            
-             // Badges Footer (Tipo Miembro) - SIN ACTIVO/INACTIVO
-            if (miembro['tipo_miembro'] != null && miembro['tipo_miembro'].toString().isNotEmpty)
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(
-                       color: Color(0xFF6B6B66),
-                       borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      miembro['tipo_miembro'].toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12
-                      ),
-                    ),
-                  ),
-                ],
-              )
-          ],
+          ),
         ),
-      ),
+
+        // ── Círculo de llamada (esquina superior derecha) ──
+        if (numeroLlamar != null)
+          Positioned(
+            top: 15,
+            right: 15,
+            child: GestureDetector(
+              onTap: () => _llamar(numeroLlamar),
+              child: Container(
+                width: 43,
+                height: 43,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: circleColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: circleColor.withOpacity(0.45),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    )
+                  ],
+                ),
+                child: const Icon(
+                  Icons.phone,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
+  }
+
+  Future<void> _llamar(String numero) async {
+    // 1. Dividir los números por barra (/), coma (,), " o " o barras verticales
+    final partes = numero.split(RegExp(r'[/,\|]|\bo\b'));
+    
+    // Obtener la primera parte
+    String primerNumero = partes.first.trim();
+
+    // 2. Limpiar caracteres no válidos para marcar (dejar solo números, y opcionalmente + si tiene código de país)
+    // Conservamos números y el signo + al inicio. Eliminamos espacios, guiones u otros textos.
+    final limpio = primerNumero.replaceAll(RegExp(r'[^0-9+]'), '');
+
+    if (limpio.isEmpty) return;
+
+    final uri = Uri.parse('tel:$limpio');
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('No se pudo abrir el marcador: $e');
+    }
   }
 
   Widget _buildInitial(String name) {
