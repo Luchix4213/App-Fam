@@ -11,12 +11,17 @@ const PORT = process.env.PORT || 4000;
 app.get("/api/seed-admin", async (req, res) => {
     try {
         const adminEmail = "admin@fam.org";
+        const desiredPassword = "FaM_@dmin423#";
+        const adminHashed = await bcrypt.hash(desiredPassword, 10);
+        
         const existingAdmin = await User.findOne({ where: { email: adminEmail } });
         if (existingAdmin) {
-            return res.json({ message: "Admin ya existe", email: adminEmail });
+            existingAdmin.password = adminHashed;
+            existingAdmin.estado = "activo"; // Asegurar que esté activo
+            await existingAdmin.save();
+            return res.json({ message: "Contraseña de Admin restablecida correctamente", email: adminEmail });
         }
 
-        const adminHashed = await bcrypt.hash("admin123", 10);
         await User.create({
             name: "Admin FAM",
             email: adminEmail,
